@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 import Vue from 'vue'
 // use
 Vue.use(VueRouter)
+
 // 规则
 const routes = []
 
