@@ -13,7 +13,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
 .login-container {
   display: flex;
   /* 上下居中 */
@@ -21,11 +21,15 @@ export default {
   /* 水平方向的对其方式 */
   justify-content: space-around;
   height: 100%;
-  background:linear-gradient(225deg,rgba(1,198,250,1),rgba(20,147,250,1));
-}
-.form-wrapper {
-  width: 478px;
-  height: 550px;
-  background-color: #f5f5f5;
+  background: linear-gradient(
+    225deg,
+    rgba(1, 198, 250, 1),
+    rgba(20, 147, 250, 1)
+  );
+  .form-wrapper {
+    width: 478px;
+    height: 550px;
+    background-color: #f5f5f5;
+  }
 }
 </style>
