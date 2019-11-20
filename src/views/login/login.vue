@@ -376,8 +376,23 @@ export default {
   .captcha-btn{
     width: 100%;
   }
+  // 对话框
   .reg-dialog .el-dialog{
     width: 602px;
+  }
+  .reg-dialog{
+    // 头部
+    .el-dialog__header{
+      text-align: center;
+      background: linear-gradient(to right,#01c5fa,#1394fa);
+      .el-dialog__title{
+        color:white;
+      }
+    }
+    // 底部
+    .dialog-footer{
+      text-align: center;
+    }
   }
 }
 // 头像组件样式
