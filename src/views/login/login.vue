@@ -76,6 +76,9 @@
 </template>
 
 <script>
+
+// 导入 axios 
+import axios from 'axios'
 export default {
   name: "login",
   // 数据
@@ -133,7 +136,28 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           // 验证成功
-          alert("submit!");
+          // alert("submit!");
+          // 接口调用
+          axios({
+            url:"http://183.237.67.218:3002/login",
+            method:"post",
+            data:{
+              phone:this.loginForm.phone,
+              password:this.loginForm.password,
+              code:this.loginForm.captcha,
+            },
+            withCredentials:true
+          }).then(res=>{
+            // window.console.log(res);
+            if(res.data.code===200){
+              // 成功
+              this.$message.success('你可算回来啦！');
+            }else{
+              // 失败
+              this.$message.warning('登录失败了哦');
+
+            }
+          })
         } else {
           // 验证失败
           window.console.log("error submit!!");
@@ -144,10 +168,10 @@ export default {
     changeCaptcha(){
       // 修改值即可
       // 很有可能重复
-      // this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login&${Math.random()}`
+      this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login&${Math.random()}`
       // 绝对不会重复
-      // this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login&${Date.now()}`
-      this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login`
+      this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login&${Date.now()}`
+      // this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login`
     }
   }
 };
