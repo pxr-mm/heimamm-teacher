@@ -48,7 +48,12 @@
               </el-input>
             </el-col>
             <el-col :span="7">
-              <img class="captcha" @click="changeCaptcha" :src="captchaSrc" alt="" />
+              <img
+                class="captcha"
+                @click="changeCaptcha"
+                :src="captchaSrc"
+                alt=""
+              />
             </el-col>
           </el-row>
         </el-form-item>
@@ -67,18 +72,90 @@
           @click="submitForm('loginForm')"
           >登录</el-button
         >
-        <el-button class="reg-btn" type="primary">注册</el-button>
+        <!-- 注册按钮 -->
+        <el-button class="reg-btn" @click="showReg = true" type="primary"
+          >注册</el-button
+        >
       </el-form>
     </div>
     <!-- 右侧 图片 -->
     <img src="../../assets/login_banner_ele.png" alt="" class="banner" />
+
+    <!-- 注册对话框 -->
+    <el-dialog title="用户注册" class="reg-dialog" :visible.sync="showReg">
+      <!-- 表单 -->
+      <el-form :model="registerForm">
+        <!-- 头像 -->
+        <el-form-item label="头像" :label-width="formLabelWidth">
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-form-item>
+        <!-- 昵称 -->
+        <el-form-item label="昵称" :label-width="formLabelWidth">
+          <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <!-- 邮箱 -->
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <!-- 手机 -->
+        <el-form-item label="手机" :label-width="formLabelWidth">
+          <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <!-- 密码 -->
+        <el-form-item label="密码" :label-width="formLabelWidth">
+          <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <!-- 图形码 -->
+        <el-form-item label="图形码" :label-width="formLabelWidth">
+          <el-row>
+            <el-col :span="16">
+              <el-input
+                v-model="registerForm.name"
+                autocomplete="off"
+              ></el-input>
+            </el-col>
+            <el-col :span="7" :offset="1">
+              <img class="captcha" src="../../assets/captcha.png" alt="" />
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <!-- 验证码 -->
+        <el-form-item label="验证码" :label-width="formLabelWidth">
+          <el-row>
+            <el-col :span="16">
+              <el-input
+                v-model="registerForm.name"
+                autocomplete="off"
+              ></el-input>
+            </el-col>
+            <el-col :span="7" :offset="1">
+              <el-button class="captcha-btn" type="primary"
+                >获取用户验证码</el-button
+              >
+            </el-col>
+          </el-row>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="showReg = false">取 消</el-button>
+        <el-button type="primary" @click="showReg = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-
-// 导入 axios 
-import axios from 'axios'
+// 导入 axios
+import axios from "axios";
 export default {
   name: "login",
   // 数据
@@ -125,9 +202,17 @@ export default {
         ]
       },
       // 验证码地址
-      captchaSrc:'http://183.237.67.218:3002/captcha?type=login',
+      captchaSrc: "http://183.237.67.218:3002/captcha?type=login",
       // 是否勾选
-      checked:true
+      checked: true,
+      // 是否显示注册框
+      showReg: false,
+      // 注册表单数据
+      registerForm: {},
+      // 文字宽度
+      formLabelWidth: "67px",
+      // 图片地址
+      imageUrl: ""
     };
   },
   // 方法
@@ -135,7 +220,7 @@ export default {
     // 点击登录
     submitForm(formName) {
       // 布尔判断 如果为false
-      if(!this.checked){
+      if (!this.checked) {
         this.$message.warning("未勾选用户协议，必须要勾！！！");
         return;
       }
@@ -147,25 +232,24 @@ export default {
           // alert("submit!");
           // 接口调用
           axios({
-            url:"http://183.237.67.218:3002/login",
-            method:"post",
-            data:{
-              phone:this.loginForm.phone,
-              password:this.loginForm.password,
-              code:this.loginForm.captcha,
+            url: "http://183.237.67.218:3002/login",
+            method: "post",
+            data: {
+              phone: this.loginForm.phone,
+              password: this.loginForm.password,
+              code: this.loginForm.captcha
             },
-            withCredentials:true
-          }).then(res=>{
+            withCredentials: true
+          }).then(res => {
             // window.console.log(res);
-            if(res.data.code===200){
+            if (res.data.code === 200) {
               // 成功
-              this.$message.success('你可算回来啦！');
-            }else{
+              this.$message.success("你可算回来啦！");
+            } else {
               // 失败
-              this.$message.warning('登录失败了哦');
-
+              this.$message.warning("登录失败了哦");
             }
-          })
+          });
         } else {
           // 验证失败
           window.console.log("error submit!!");
@@ -173,13 +257,32 @@ export default {
         }
       });
     },
-    changeCaptcha(){
+    changeCaptcha() {
       // 修改值即可
       // 很有可能重复
-      this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login&${Math.random()}`
+      this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login&${Math.random()}`;
       // 绝对不会重复
-      this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login&${Date.now()}`
+      this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login&${Date.now()}`;
       // this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login`
+    },
+    // 图片上传的方法
+    // res 服务器返回的值
+    // file 文件信息
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    // 文件上传之前对文件做一些限制
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
     }
   }
 };
@@ -264,5 +367,50 @@ export default {
       margin-top: 27px;
     }
   }
+
+  // 对话框中的 样式
+  .captcha {
+    height: 41px;
+    width: 100%;
+  }
+  .captcha-btn{
+    width: 100%;
+  }
+  .reg-dialog .el-dialog{
+    width: 602px;
+  }
+}
+// 头像组件样式
+.avatar-uploader {
+  text-align: center;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+
+.login-container .avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
 }
 </style>
