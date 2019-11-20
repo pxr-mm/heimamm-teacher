@@ -9,45 +9,66 @@
         <span class="line"></span>
         <span class="sub-title">用户登录</span>
       </div>
-      <!-- 输入框 -->
-      <el-input
-        placeholder="请输入手机号"
-        prefix-icon="el-icon-user"
-        class="phone-input"
-        v-model="input2"
+      <!-- 表单 -->
+      <el-form
+        :model="loginForm"
+        :rules="loginRules"
+        ref="loginForm"
+        status-icon
       >
-      </el-input>
-      <el-input
-        placeholder="请输入密码"
-        prefix-icon="el-icon-lock"
-        class="password-input"
-        v-model="input2"
-      >
-      </el-input>
-      <el-row class="captcha-row">
-        <el-col :span="17">
+        <!-- 手机号 -->
+        <el-form-item label="" prop="phone">
           <el-input
-            placeholder="请输入验证码"
-            prefix-icon="el-icon-key"
-            v-model="input2"
+            placeholder="请输入手机号"
+            prefix-icon="el-icon-user"
+            class="phone-input"
+            v-model="loginForm.phone"
           >
           </el-input>
-        </el-col>
-        <el-col :span="7">
-          <img class="captcha" src="../../assets/captcha.png" alt="" />
-        </el-col>
-      </el-row>
+        </el-form-item>
+        <!-- 密码 -->
+        <el-form-item label="" prop="password">
+          <el-input
+            placeholder="请输入密码"
+            prefix-icon="el-icon-lock"
+            class="password-input"
+            v-model="loginForm.password"
+          >
+          </el-input>
+        </el-form-item>
+        <!-- 验证码 -->
+        <el-form-item label="" prop="captcha">
+          <el-row class="captcha-row">
+            <el-col :span="17">
+              <el-input
+                placeholder="请输入验证码"
+                prefix-icon="el-icon-key"
+                v-model="loginForm.captcha"
+              >
+              </el-input>
+            </el-col>
+            <el-col :span="7">
+              <img class="captcha" @click="changeCaptcha" :src="captchaSrc" alt="" />
+            </el-col>
+          </el-row>
+        </el-form-item>
 
-      <!-- 协议 -->
-      <el-checkbox class="checkbox">
-        我已阅读并同意
-        <el-link type="primary">用户协议</el-link>
-        和
-        <el-link type="primary">隐私条款</el-link>
-      </el-checkbox>
-      <!-- 登录 注册按钮 -->
-      <el-button class="login-btn" type="primary">登录</el-button>
-      <el-button class="reg-btn" type="primary">注册</el-button>
+        <!-- 协议 -->
+        <el-checkbox class="checkbox">
+          我已阅读并同意
+          <el-link type="primary">用户协议</el-link>
+          和
+          <el-link type="primary">隐私条款</el-link>
+        </el-checkbox>
+        <!-- 登录 注册按钮 -->
+        <el-button
+          class="login-btn"
+          type="primary"
+          @click="submitForm('loginForm')"
+          >登录</el-button
+        >
+        <el-button class="reg-btn" type="primary">注册</el-button>
+      </el-form>
     </div>
     <!-- 右侧 图片 -->
     <img src="../../assets/login_banner_ele.png" alt="" class="banner" />
@@ -56,7 +77,79 @@
 
 <script>
 export default {
-  name: "login"
+  name: "login",
+  // 数据
+  data() {
+    // 定义校验的规则
+    const checkPhone = (rules, value, callback) => {
+      // value是值
+      if (!value) {
+        callback(new Error("手机号不能为空"));
+      } else {
+        // 格式验证
+        const reg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+        // 验证
+        if (reg.test(value)) {
+          // 对的
+          callback();
+        } else {
+          // 错误
+          callback(new Error("手机号格式不对哦"));
+        }
+      }
+    };
+
+    return {
+      // 登录表单数据
+      loginForm: {
+        // 手机号
+        phone: "",
+        // 密码
+        password: "",
+        // 验证码
+        captcha: ""
+      },
+      // 登录验证规则
+      loginRules: {
+        phone: [{ validator: checkPhone }],
+        password: [
+          { required: true, message: "密码不能为空" },
+          { min: 6, max: 12, message: "密码的强度不够" }
+        ],
+        captcha: [
+          { required: true, message: "验证码不能为空" },
+          { min: 4, max: 4, message: "验证码只有4位哦，不要写错了噢" }
+        ]
+      },
+      // 验证码地址
+      captchaSrc:'http://183.237.67.218:3002/captcha?type=login'
+    };
+  },
+  // 方法
+  methods: {
+    submitForm(formName) {
+      // this.$refs['ruleForm']==> 获取饿了么的表单
+      // 饿了么的表单.validate()
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          // 验证成功
+          alert("submit!");
+        } else {
+          // 验证失败
+          window.console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    changeCaptcha(){
+      // 修改值即可
+      // 很有可能重复
+      // this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login&${Math.random()}`
+      // 绝对不会重复
+      // this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login&${Date.now()}`
+      this.captchaSrc = `http://183.237.67.218:3002/captcha?type=login`
+    }
+  }
 };
 </script>
 

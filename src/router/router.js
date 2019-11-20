@@ -1,6 +1,6 @@
 // 导入vue-router
 import VueRouter from 'vue-router'
-// 导入vue
+// 导入vue 用就要导入
 import Vue from 'vue'
 // use
 Vue.use(VueRouter)
