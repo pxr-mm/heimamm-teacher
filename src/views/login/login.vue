@@ -125,7 +125,12 @@
             </el-col>
             <el-col :span="7" :offset="1">
               <!-- 图形验证码 -->
-              <img class="captcha" @click="changeRegCaptcha" :src="regCaptcha" alt="" />
+              <img
+                class="captcha"
+                @click="changeRegCaptcha"
+                :src="regCaptcha"
+                alt=""
+              />
             </el-col>
           </el-row>
         </el-form-item>
@@ -140,8 +145,12 @@
             </el-col>
             <el-col :span="7" :offset="1">
               <!-- 获取手机验证码 -->
-              <el-button class="captcha-btn" @click="getMessage" type="primary"
-                >获取用户验证码</el-button
+              <el-button
+                class="captcha-btn"
+                @click="getMessage"
+                type="primary"
+                :disabled="isDisabled"
+                >{{ btnTxt }}</el-button
               >
             </el-col>
           </el-row>
@@ -211,15 +220,19 @@ export default {
       showReg: false,
       // 注册表单数据
       registerForm: {
-        phone:"",
-        code:""
+        phone: "",
+        code: ""
       },
       // 文字宽度
       formLabelWidth: "67px",
       // 图片地址
       imageUrl: "",
       // 注册图形验证码 地址
-      regCaptcha:'http://183.237.67.218:3002/captcha?type=sendsms'
+      regCaptcha: "http://183.237.67.218:3002/captcha?type=sendsms",
+      // 短信验证码按钮文本
+      btnTxt: "获取短信验证码",
+      // 按钮是否禁用
+      isDisabled:false
     };
   },
   // 方法
@@ -292,36 +305,53 @@ export default {
       return isJPG && isLt2M;
     },
     // 重新获取注册 图形验证码
-    changeRegCaptcha(){
+    changeRegCaptcha() {
       // 修改地址
       this.regCaptcha = `http://183.237.67.218:3002/captcha?type=sendsms&${Date.now()}`;
     },
     // 获取短信验证码
-    getMessage(){
+    getMessage() {
       // 非空判断
-      if(this.registerForm.phone.trim()==''){
+      if (this.registerForm.phone.trim() == "") {
         this.$message.warning("哥们，你的手机号呢！滑稽");
         return;
       }
       // 格式判断
       const reg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
-      if(!reg.test(this.registerForm.phone)){
+      if (!reg.test(this.registerForm.phone)) {
         this.$message.warning("老铁,你的手机是不是写错了呀！");
         return;
       }
       // 说明 格式 内容都有
       axios({
-        url:"http://183.237.67.218:3002/sendsms",
-        method:"post",
-        data:{
-          code:this.registerForm.code,
-          phone:this.registerForm.phone
+        url: "http://183.237.67.218:3002/sendsms",
+        method: "post",
+        data: {
+          code: this.registerForm.code,
+          phone: this.registerForm.phone
         },
         // 跨域携带cookie
-        withCredentials:true
-      }).then(res=>{
+        withCredentials: true
+      }).then(res => {
         window.console.log(res);
-      })
+      });
+
+      let time = 60;
+      // 禁用按钮 开启定时器
+      this.isDisabled = true;
+      const interId = setInterval(() => {
+        // 递减
+        time--;
+        // 修改页面
+        this.btnTxt = `${time}S后再次获取`;
+        if (time == 0) {
+          clearInterval(interId);
+          // 重新启用按钮
+          this.isDisabled = false;
+          // 还原文本
+          this.btnTxt = "获取短信验证码"
+        }
+      }, 100);
     }
   }
 };
@@ -412,24 +442,24 @@ export default {
     height: 41px;
     width: 100%;
   }
-  .captcha-btn{
+  .captcha-btn {
     width: 100%;
   }
   // 对话框
-  .reg-dialog .el-dialog{
+  .reg-dialog .el-dialog {
     width: 602px;
   }
-  .reg-dialog{
+  .reg-dialog {
     // 头部
-    .el-dialog__header{
+    .el-dialog__header {
       text-align: center;
-      background: linear-gradient(to right,#01c5fa,#1394fa);
-      .el-dialog__title{
-        color:white;
+      background: linear-gradient(to right, #01c5fa, #1394fa);
+      .el-dialog__title {
+        color: white;
       }
     }
     // 底部
-    .dialog-footer{
+    .dialog-footer {
       text-align: center;
     }
   }
