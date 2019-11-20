@@ -108,7 +108,7 @@
         </el-form-item>
         <!-- 手机 -->
         <el-form-item label="手机" :label-width="formLabelWidth">
-          <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+          <el-input v-model="registerForm.phone" autocomplete="off"></el-input>
         </el-form-item>
         <!-- 密码 -->
         <el-form-item label="密码" :label-width="formLabelWidth">
@@ -119,12 +119,13 @@
           <el-row>
             <el-col :span="16">
               <el-input
-                v-model="registerForm.name"
+                v-model="registerForm.code"
                 autocomplete="off"
               ></el-input>
             </el-col>
             <el-col :span="7" :offset="1">
-              <img class="captcha" src="../../assets/captcha.png" alt="" />
+              <!-- 图形验证码 -->
+              <img class="captcha" @click="changeRegCaptcha" :src="regCaptcha" alt="" />
             </el-col>
           </el-row>
         </el-form-item>
@@ -138,7 +139,8 @@
               ></el-input>
             </el-col>
             <el-col :span="7" :offset="1">
-              <el-button class="captcha-btn" type="primary"
+              <!-- 获取手机验证码 -->
+              <el-button class="captcha-btn" @click="getMessage" type="primary"
                 >获取用户验证码</el-button
               >
             </el-col>
@@ -208,11 +210,16 @@ export default {
       // 是否显示注册框
       showReg: false,
       // 注册表单数据
-      registerForm: {},
+      registerForm: {
+        phone:"",
+        code:""
+      },
       // 文字宽度
       formLabelWidth: "67px",
       // 图片地址
-      imageUrl: ""
+      imageUrl: "",
+      // 注册图形验证码 地址
+      regCaptcha:'http://183.237.67.218:3002/captcha?type=sendsms'
     };
   },
   // 方法
@@ -283,6 +290,38 @@ export default {
         this.$message.error("上传头像图片大小不能超过 2MB!");
       }
       return isJPG && isLt2M;
+    },
+    // 重新获取注册 图形验证码
+    changeRegCaptcha(){
+      // 修改地址
+      this.regCaptcha = `http://183.237.67.218:3002/captcha?type=sendsms&${Date.now()}`;
+    },
+    // 获取短信验证码
+    getMessage(){
+      // 非空判断
+      if(this.registerForm.phone.trim()==''){
+        this.$message.warning("哥们，你的手机号呢！滑稽");
+        return;
+      }
+      // 格式判断
+      const reg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+      if(!reg.test(this.registerForm.phone)){
+        this.$message.warning("老铁,你的手机是不是写错了呀！");
+        return;
+      }
+      // 说明 格式 内容都有
+      axios({
+        url:"http://183.237.67.218:3002/sendsms",
+        method:"post",
+        data:{
+          code:this.registerForm.code,
+          phone:this.registerForm.phone
+        },
+        // 跨域携带cookie
+        withCredentials:true
+      }).then(res=>{
+        window.console.log(res);
+      })
     }
   }
 };
