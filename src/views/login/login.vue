@@ -105,7 +105,7 @@
         </el-form-item>
         <!-- 邮箱 -->
         <el-form-item label="邮箱" :label-width="formLabelWidth">
-          <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+          <el-input v-model="registerForm.email" autocomplete="off"></el-input>
         </el-form-item>
         <!-- 手机 -->
         <el-form-item label="手机" :label-width="formLabelWidth">
@@ -113,7 +113,7 @@
         </el-form-item>
         <!-- 密码 -->
         <el-form-item label="密码" :label-width="formLabelWidth">
-          <el-input v-model="registerForm.name" autocomplete="off"></el-input>
+          <el-input v-model="registerForm.password" autocomplete="off"></el-input>
         </el-form-item>
         <!-- 图形码 -->
         <el-form-item label="图形码" :label-width="formLabelWidth">
@@ -140,7 +140,7 @@
           <el-row>
             <el-col :span="16">
               <el-input
-                v-model="registerForm.name"
+                v-model="registerForm.rcode"
                 autocomplete="off"
               ></el-input>
             </el-col>
@@ -159,7 +159,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="showReg = false">取 消</el-button>
-        <el-button type="primary" @click="showReg = false">确 定</el-button>
+        <el-button type="primary" @click="registerUser">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -221,7 +221,15 @@ export default {
       showReg: false,
       // 注册表单数据
       registerForm: {
+        name:"",
         phone: "",
+        email:"",
+        // 用户头像
+        avatar:"",
+        password:"",
+        // 短信验证码
+        rcode:"",
+        // 图形验证码
         code: ""
       },
       // 文字宽度
@@ -291,6 +299,9 @@ export default {
     // file 文件信息
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
+      // window.console.log(res);
+      // 保存到表单中
+      this.registerForm.avatar = res.data.file_path;
     },
     // 文件上传之前对文件做一些限制
     beforeAvatarUpload(file) {
@@ -353,6 +364,24 @@ export default {
           this.btnTxt = "获取短信验证码"
         }
       }, 100);
+    },
+    // 用户注册
+    registerUser(){
+      axios({
+        url:"http://183.237.67.218:3002/register",
+        method:"post",
+        data:{
+          avatar:this.registerForm.avatar,
+          email:this.registerForm.email,
+          name:this.registerForm.name,
+          password:this.registerForm.password,
+          phone:this.registerForm.phone,
+          rcode:this.registerForm.rcode
+        },
+        withCredentials:true
+      }).then(res=>{
+        window.console.log(res);
+      })
     }
   }
 };
