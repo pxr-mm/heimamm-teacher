@@ -27,6 +27,7 @@
           :collapse="isCollapse"
           default-active="5"
           class="el-menu-vertical-demo"
+          router 
         >
           <el-menu-item index="1">
             <i class="el-icon-pie-chart"></i>
@@ -40,17 +41,20 @@
             <i class="el-icon-edit-outline"></i>
             <span slot="title">题库列表</span>
           </el-menu-item>
-          <el-menu-item index="4">
+          <el-menu-item index="enterprise">
             <i class="el-icon-office-building"></i>
             <span slot="title">企业列表</span>
           </el-menu-item>
-          <el-menu-item index="5">
+          <el-menu-item index="subject">
             <i class="el-icon-notebook-2"></i>
             <span slot="title">学科列表</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
-      <el-main class="main">Main</el-main>
+      <!-- 主体区域 -->
+      <el-main class="main">
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>

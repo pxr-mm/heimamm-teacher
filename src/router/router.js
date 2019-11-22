@@ -10,6 +10,12 @@ import login from "../views/login/login.vue";
 // 导入 首页页面组件
 import index from "../views/index/index.vue";
 
+// 嵌套路由的组件导入
+// 学科
+import subject from "../views/index/subject/subject.vue"
+// 企业
+import enterprise from "../views/index/enterprise/enterprise.vue"
+
 // 规则
 const routes = [
   // 登录组件规则
@@ -20,7 +26,18 @@ const routes = [
   // 首页组件规则
   {
     path: "/index",
-    component: index
+    component: index,
+    // 嵌套路由
+    children:[
+      {
+        path:"subject", // 匹配的是 /index/subject
+        component:subject
+      },
+      {
+        path:"enterprise", // 匹配的是 /index/enterprise
+        component:enterprise
+      }
+    ]
   }
 ];
 
