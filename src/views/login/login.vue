@@ -84,7 +84,7 @@
     <!-- 注册对话框 -->
     <el-dialog title="用户注册" class="reg-dialog" :visible.sync="showReg">
       <!-- 表单 -->
-      <el-form :model="registerForm">
+      <el-form :model="registerForm" :rules="registerRules" ref="registerForm">
         <!-- 头像 -->
         <el-form-item label="头像" :label-width="formLabelWidth">
           <el-upload
@@ -100,11 +100,11 @@
           </el-upload>
         </el-form-item>
         <!-- 昵称 -->
-        <el-form-item label="昵称" :label-width="formLabelWidth">
+        <el-form-item label="昵称" :label-width="formLabelWidth" prop="name">
           <el-input v-model="registerForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <!-- 邮箱 -->
-        <el-form-item label="邮箱" :label-width="formLabelWidth">
+        <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
           <el-input v-model="registerForm.email" autocomplete="off"></el-input>
         </el-form-item>
         <!-- 手机 -->
@@ -113,7 +113,10 @@
         </el-form-item>
         <!-- 密码 -->
         <el-form-item label="密码" :label-width="formLabelWidth">
-          <el-input v-model="registerForm.password" autocomplete="off"></el-input>
+          <el-input
+            v-model="registerForm.password"
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
         <!-- 图形码 -->
         <el-form-item label="图形码" :label-width="formLabelWidth">
@@ -190,6 +193,24 @@ export default {
         }
       }
     };
+    // 校验 邮箱
+    const checkEmail = (rules, value, callback) => {
+      // value是值
+      if (!value) {
+        callback(new Error("邮箱不能为空"));
+      } else {
+        // 格式验证
+        const reg = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
+        // 验证
+        if (reg.test(value)) {
+          // 对的
+          callback();
+        } else {
+          // 错误
+          callback(new Error("邮箱格式不对哦"));
+        }
+      }
+    };
 
     return {
       // 登录表单数据
@@ -221,16 +242,28 @@ export default {
       showReg: false,
       // 注册表单数据
       registerForm: {
-        name:"",
+        name: "",
         phone: "",
-        email:"",
+        email: "",
         // 用户头像
-        avatar:"",
-        password:"",
+        avatar: "",
+        password: "",
         // 短信验证码
-        rcode:"",
+        rcode: "",
         // 图形验证码
         code: ""
+      },
+      // 注册表单验证规则
+      registerRules: {
+        // 姓名
+        name: [{ required: true, message: "姓名不能为空哦", trigger: "blur" }],
+        // 邮箱
+        email: [
+          {
+            required: true,
+            validator: checkEmail
+          }
+        ]
       },
       // 文字宽度
       formLabelWidth: "67px",
@@ -241,7 +274,7 @@ export default {
       // 短信验证码按钮文本
       btnTxt: "获取短信验证码",
       // 按钮是否禁用
-      isDisabled:false
+      isDisabled: false
     };
   },
   // 方法
@@ -361,27 +394,39 @@ export default {
           // 重新启用按钮
           this.isDisabled = false;
           // 还原文本
-          this.btnTxt = "获取短信验证码"
+          this.btnTxt = "获取短信验证码";
         }
       }, 100);
     },
     // 用户注册
-    registerUser(){
-      axios({
-        url:"http://183.237.67.218:3002/register",
-        method:"post",
-        data:{
-          avatar:this.registerForm.avatar,
-          email:this.registerForm.email,
-          name:this.registerForm.name,
-          password:this.registerForm.password,
-          phone:this.registerForm.phone,
-          rcode:this.registerForm.rcode
-        },
-        withCredentials:true
-      }).then(res=>{
-        window.console.log(res);
-      })
+    registerUser() {
+      // this.$refs['ruleForm']==> 获取饿了么的表单
+      // 饿了么的表单.validate()
+      this.$refs.registerForm.validate(valid => {
+        if (valid) {
+          // window.alert("ok1");
+
+          axios({
+            url: "http://183.237.67.218:3002/register",
+            method: "post",
+            data: {
+              avatar: this.registerForm.avatar,
+              email: this.registerForm.email,
+              name: this.registerForm.name,
+              password: this.registerForm.password,
+              phone: this.registerForm.phone,
+              rcode: this.registerForm.rcode
+            },
+            withCredentials: true
+          }).then(res => {
+            window.console.log(res);
+          });
+        } else {
+          // 验证失败
+          window.console.log("error submit!!");
+          return false;
+        }
+      });
     }
   }
 };
