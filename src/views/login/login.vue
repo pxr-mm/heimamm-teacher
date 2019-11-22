@@ -170,7 +170,12 @@
 
 <script>
 // 导入 axios
-import axios from "axios";
+// 已经全部抽取为方法了，不再需要axios
+// import axios from "axios";
+
+// 导入抽取的api 方法
+import { login, register,sendsms } from "../../api/api.js";
+
 export default {
   name: "login",
   // 数据
@@ -293,15 +298,21 @@ export default {
           // 验证成功
           // alert("submit!");
           // 接口调用
-          axios({
-            url: "http://183.237.67.218:3002/login",
-            method: "post",
-            data: {
-              phone: this.loginForm.phone,
-              password: this.loginForm.password,
-              code: this.loginForm.captcha
-            },
-            withCredentials: true
+          // axios({
+          //   url: "http://183.237.67.218:3002/login",
+          //   method: "post",
+          //   data: {
+          //     phone: this.loginForm.phone,
+          //     password: this.loginForm.password,
+          //     code: this.loginForm.captcha
+          //   },
+          //   withCredentials: true
+          // })
+
+          login({
+            phone: this.loginForm.phone,
+            password: this.loginForm.password,
+            code: this.loginForm.captcha
           }).then(res => {
             // window.console.log(res);
             if (res.data.code === 200) {
@@ -368,16 +379,21 @@ export default {
         return;
       }
       // 说明 格式 内容都有
-      axios({
-        url: "http://183.237.67.218:3002/sendsms",
-        method: "post",
-        data: {
+      // axios({
+      //   url: "http://183.237.67.218:3002/sendsms",
+      //   method: "post",
+      //   data: {
+      //     code: this.registerForm.code,
+      //     phone: this.registerForm.phone
+      //   },
+      //   // 跨域携带cookie
+      //   withCredentials: true
+      // })
+      
+      sendsms( {
           code: this.registerForm.code,
           phone: this.registerForm.phone
-        },
-        // 跨域携带cookie
-        withCredentials: true
-      }).then(res => {
+        }).then(res => {
         window.console.log(res);
       });
 
@@ -405,19 +421,26 @@ export default {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
           // window.alert("ok1");
-
-          axios({
-            url: "http://183.237.67.218:3002/register",
-            method: "post",
-            data: {
-              avatar: this.registerForm.avatar,
-              email: this.registerForm.email,
-              name: this.registerForm.name,
-              password: this.registerForm.password,
-              phone: this.registerForm.phone,
-              rcode: this.registerForm.rcode
-            },
-            withCredentials: true
+          // axios({
+          //   url: "http://183.237.67.218:3002/register",
+          //   method: "post",
+          //   data: {
+          //     avatar: this.registerForm.avatar,
+          //     email: this.registerForm.email,
+          //     name: this.registerForm.name,
+          //     password: this.registerForm.password,
+          //     phone: this.registerForm.phone,
+          //     rcode: this.registerForm.rcode
+          //   },
+          //   withCredentials: true
+          // })
+          register({
+            avatar: this.registerForm.avatar,
+            email: this.registerForm.email,
+            name: this.registerForm.name,
+            password: this.registerForm.password,
+            phone: this.registerForm.phone,
+            rcode: this.registerForm.rcode
           }).then(res => {
             window.console.log(res);
           });
