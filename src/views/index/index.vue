@@ -15,7 +15,9 @@
       <div class="right">
         <img class="avatar" src="../../assets/avatar.jpg" alt="" />
         <span class="name">西兰花,您好</span>
-        <el-button class="logout" size="mini" type="primary">退出</el-button>
+        <el-button class="logout" @click="logout" size="mini" type="primary"
+          >退出</el-button
+        >
       </div>
     </el-header>
     <el-container>
@@ -27,7 +29,7 @@
           :collapse="isCollapse"
           default-active="5"
           class="el-menu-vertical-demo"
-          router 
+          router
         >
           <el-menu-item index="/index/dataRecord">
             <i class="el-icon-pie-chart"></i>
@@ -61,7 +63,7 @@
 
 <script>
 // 导入 获取token的函数
-import {getToken} from '../../utils/token.js'
+import { getToken,removeToken } from "../../utils/token.js";
 export default {
   name: "index",
   data() {
@@ -74,13 +76,35 @@ export default {
   beforeCreate() {
     // 判断token是否存在
     const token = getToken();
-    if(!token){
+    if (!token) {
       // 提示用户
-      this.$message.error('小老弟，你木有登录哦，先去登录吧')
+      this.$message.error("小老弟，你木有登录哦，先去登录吧");
       // 不存在 去登录页
-      this.$router.push("/login")
+      this.$router.push("/login");
     }
   },
+  methods: {
+    // 退出
+    logout() {
+      this.$confirm("你即将退出黑马面面系统，想清楚了没，小老弟", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "error"
+      })
+        .then(() => {
+            // 删除token
+            removeToken();
+            // 去登录页
+            this.$router.push('/login');
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "爱你哟，ღ( ´･ᴗ･` )比心"
+          });
+        });
+    }
+  }
 };
 </script>
 
