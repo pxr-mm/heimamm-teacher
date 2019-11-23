@@ -13,8 +13,9 @@
         <span class="title">黑马面面</span>
       </div>
       <div class="right">
-        <img class="avatar" src="../../assets/avatar.jpg" alt="" />
-        <span class="name">西兰花,您好</span>
+        <!-- 头像 -->
+        <img class="avatar" :src="avatar" alt="" />
+        <span class="name">{{ name }},您好</span>
         <el-button class="logout" @click="logout" size="mini" type="primary"
           >退出</el-button
         >
@@ -64,12 +65,18 @@
 <script>
 // 导入 获取token的函数
 import { getToken,removeToken } from "../../utils/token.js";
+// 导入 用户信息方法
+import {userInfo} from '../../api/api.js';
 export default {
   name: "index",
   data() {
     return {
       // 是否折叠
-      isCollapse: false
+      isCollapse: false,
+      // 头像地址
+      avatar :"",
+      // 用户名
+      name:""
     };
   },
   // 生命周期钩子
@@ -82,6 +89,25 @@ export default {
       // 不存在 去登录页
       this.$router.push("/login");
     }
+  },
+  // 创建钩子
+  created() {
+    userInfo().then(res=>{
+      // // 判断token
+      // if(res.data.code===0){
+      //   // token有问题
+      //   this.$message.error("小老弟，伪造token，牛逼啊！");
+      //   // 删除token
+      //   removeToken();
+      //   // 去登录页
+      //   this.$router.push("/login")
+      //   return 
+      // }
+      // window.console.log(res);
+      // 保存到data中
+      this.avatar = `http://183.237.67.218:3002/${res.data.data.avatar}`
+      this.name=res.data.data.name
+    })
   },
   methods: {
     // 退出
