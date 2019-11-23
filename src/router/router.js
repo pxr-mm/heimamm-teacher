@@ -2,6 +2,14 @@
 import VueRouter from "vue-router";
 // 导入vue 用就要导入
 import Vue from "vue";
+
+// 重写push方法 屏蔽 重复跳转错误
+// 解决两次访问相同路由地址报错
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 // use
 Vue.use(VueRouter);
 
@@ -15,6 +23,12 @@ import index from "../views/index/index.vue";
 import subject from "../views/index/subject/subject.vue"
 // 企业
 import enterprise from "../views/index/enterprise/enterprise.vue"
+// 数据
+import dataRecord from "../views/index/data/data.vue"
+// 用户
+import userList from "../views/index/user/user.vue"
+// 题库
+import questionList from "../views/index/question/question.vue"
 
 // 规则
 const routes = [
@@ -36,6 +50,16 @@ const routes = [
       {
         path:"enterprise", // 匹配的是 /index/enterprise
         component:enterprise
+      },
+      {
+        path:"dataRecord", // 匹配的是 /index/dataRecord
+        component:dataRecord
+      },    {
+        path:"userList", // 匹配的是 /index/userList
+        component:userList
+      },    {
+        path:"questionList", // 匹配的是 /index/questionList
+        component:questionList
       }
     ]
   }
