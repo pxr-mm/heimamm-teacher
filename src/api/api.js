@@ -6,9 +6,9 @@ import { getToken, removeToken } from "../utils/token.js";
 
 // 导入 element-ui的弹框
 import { Message } from "element-ui";
-// 导入Vue
-import Vue from 'vue'
-Vue.use(Message);
+// // 导入Vue
+// import Vue from 'vue'
+// Vue.use(Message);
 // 导入 路由
 import router from "../router/router.js";
 
