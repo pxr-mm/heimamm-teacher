@@ -174,7 +174,10 @@
 // import axios from "axios";
 
 // 导入抽取的api 方法
-import { login, register,sendsms } from "../../api/api.js";
+import { login, register, sendsms } from "../../api/api.js";
+
+// 导入 抽取的token 方法
+import {setToken} from '../../utils/token.js'
 
 export default {
   name: "login",
@@ -314,10 +317,16 @@ export default {
             password: this.loginForm.password,
             code: this.loginForm.captcha
           }).then(res => {
-            // window.console.log(res);
             if (res.data.code === 200) {
               // 成功
               this.$message.success("你可算回来啦！");
+              // 跳转
+              this.$router.push('/index');
+              // 保存凭证
+              // window.localStorage.setItem('mmtoken',res.data.data.token)
+              // 调用工具函数 保存token
+              setToken(res.data.data.token)
+              // window.console.log(res);
             } else {
               // 失败
               this.$message.warning("登录失败了哦");
@@ -389,11 +398,11 @@ export default {
       //   // 跨域携带cookie
       //   withCredentials: true
       // })
-      
-      sendsms( {
-          code: this.registerForm.code,
-          phone: this.registerForm.phone
-        }).then(res => {
+
+      sendsms({
+        code: this.registerForm.code,
+        phone: this.registerForm.phone
+      }).then(res => {
         window.console.log(res);
       });
 

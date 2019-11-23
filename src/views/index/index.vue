@@ -60,6 +60,8 @@
 </template>
 
 <script>
+// 导入 获取token的函数
+import {getToken} from '../../utils/token.js'
 export default {
   name: "index",
   data() {
@@ -67,7 +69,18 @@ export default {
       // 是否折叠
       isCollapse: false
     };
-  }
+  },
+  // 生命周期钩子
+  beforeCreate() {
+    // 判断token是否存在
+    const token = getToken();
+    if(!token){
+      // 提示用户
+      this.$message.error('小老弟，你木有登录哦，先去登录吧')
+      // 不存在 去登录页
+      this.$router.push("/login")
+    }
+  },
 };
 </script>
 
