@@ -51,9 +51,9 @@
         <el-table-column label="操作">
           <!-- 插槽 -->
           <template slot-scope="scope">
-            <el-button type="text">编辑</el-button>
+            <el-button @click="showEdit(scope.row)" type="text">编辑</el-button>
             <el-button @click="status(scope.row)" type="text">
-              {{ scope.row.status===1?'禁用':'启用' }}
+              {{ scope.row.status === 1 ? "禁用" : "启用" }}
             </el-button>
             <el-button @click="remove(scope.row)" type="text">删除</el-button>
           </template>
@@ -105,6 +105,43 @@
         <el-button type="primary" @click="submitAdd">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 编辑对话框 -->
+    <el-dialog
+      title="编辑学科"
+      class="edit-dialog"
+      :visible.sync="editFormVisible"
+    >
+      <el-form :model="editForm" ref="editForm" :rules="addRules">
+        <el-form-item label="学科编号" prop="rid" :label-width="formLabelWidth">
+          <el-input v-model="editForm.rid" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item
+          label="学科名称"
+          prop="name"
+          :label-width="formLabelWidth"
+        >
+          <el-input v-model="editForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="学科简称" :label-width="formLabelWidth">
+          <el-input v-model="editForm.short_name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="学科简介" :label-width="formLabelWidth">
+          <el-input
+            v-model="editForm.intro"
+            type="textarea"
+            :rows="2"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="学科备注" :label-width="formLabelWidth">
+          <el-input v-model="editForm.remark" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitEdit">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -141,7 +178,11 @@ export default {
         name: [
           { required: true, message: "学科名称不能为空哦", trigger: "blur" }
         ]
-      }
+      },
+      // 编辑表单的数据
+      editForm: {},
+      // 编辑表单是否显示
+      editFormVisible: false
     };
   },
   created() {
@@ -236,7 +277,7 @@ export default {
             })
             .then(res => {
               // window.console.log(res);
-              if(res.data.code==200){
+              if (res.data.code == 200) {
                 // 提示
                 // this.$message.success(res.data.message)
                 // 重新获取数据
@@ -252,18 +293,51 @@ export default {
         });
     },
     // 启用禁用数据的方法
-    status(data){
-      subject.status({
-        id:data.id,
-        // 三元表单时
-        status: data.status===1?0:1
-      }).then(res=>{
-        // window.console.log(res)
-        if(res.data.code===200){
-          this.getList();
-          // this.$message.success(res.data.message);
+    status(data) {
+      subject
+        .status({
+          id: data.id,
+          // 三元表单时
+          status: data.status === 1 ? 0 : 1
+        })
+        .then(res => {
+          // window.console.log(res)
+          if (res.data.code === 200) {
+            this.getList();
+            // this.$message.success(res.data.message);
+          }
+        });
+    },
+    // 点击编辑按钮
+    showEdit(data) {
+      // 弹框
+      this.editFormVisible = true;
+      // 修改数据 浅拷贝
+      // this.editForm = data;
+      // 为了不联动 改为 深拷贝
+      this.editForm = JSON.parse(JSON.stringify(data));
+    },
+    // 保存修改
+    submitEdit() {
+      // 编辑表单
+      this.$refs.editForm.validate(valid => {
+        if (valid) {
+          // 成功
+          // 调用接口
+          subject.edit(this.editForm).then(res => {
+            // 如果成功 提示用户 关闭 对话框
+            if (res.data.code == 200) {
+              this.editFormVisible = false;
+              // 重新获取一次
+              this.getList();
+            }
+          });
+        } else {
+          // 失败
+          this.$message.warning("老铁，数据不太对哦");
+          return false;
         }
-      })
+      });
     }
   }
 };
@@ -292,6 +366,20 @@ export default {
   // span 变红
   .red {
     color: red;
+  }
+
+  // 编辑器框
+  .edit-dialog {
+    .el-dialog__header {
+      background-color: deepskyblue;
+      text-align: center;
+      .el-dialog__title {
+        color: white;
+      }
+    }
+    .el-input__inner {
+      width: 100%;
+    }
   }
 }
 </style>
