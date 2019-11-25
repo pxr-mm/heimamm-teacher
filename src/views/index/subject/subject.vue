@@ -31,16 +31,23 @@
       <!-- 表格 -->
       <el-table :data="tableData" style="width: 100%" stripe border>
         <el-table-column type="index" label="序号"> </el-table-column>
-        <el-table-column prop="date" label="学科标号"> </el-table-column>
+        <el-table-column prop="rid" label="学科编号"> </el-table-column>
         <el-table-column prop="name" label="学科名称"> </el-table-column>
-        <el-table-column prop="address" label="简称"> </el-table-column>
-        <el-table-column prop="skill" label="创建者"> </el-table-column>
-        <el-table-column prop="skill" label="创建日期"> </el-table-column>
-        <el-table-column label="状态"> </el-table-column>
+        <el-table-column prop="short_name" label="简称"> </el-table-column>
+        <el-table-column prop="creater" label="创建者"> </el-table-column>
+        <el-table-column prop="create_time" label="创建日期"> </el-table-column>
+        <el-table-column label="状态">
+          <template slot-scope="scope">
+            <span v-if="scope.row.status===0" class="red">禁用</span>
+            <span v-else>启用</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
           <!-- 插槽 -->
           <template>
-            <el-button type="primary">编辑</el-button>
+            <el-button type="text">编辑</el-button>
+            <el-button type="text">禁用</el-button>
+            <el-button type="text">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -59,14 +66,32 @@
 </template>
 
 <script>
+// 导入 接口
+import {subject} from '../../../api/api.js'
 export default {
   name: "subject",
   data() {
     return {
       formInline: {},
-      tableData: []
+      // 数据
+      tableData: [],
+      // 页码
+      page:1,
+      // 页容量
+      limit:10
     };
-  }
+  },
+  created() {
+    // 调用接口
+    subject.list({
+      page:this.page,
+      limit:this.limit
+    }).then(res=>{
+      window.console.log(res)
+      // 赋值给table
+      this.tableData = res.data.data.items
+    })
+  },
 };
 </script>
 
@@ -89,6 +114,10 @@ export default {
   // card的样式
   .main-card{
     margin-top: 20px;
+  }
+  // span 变红
+  .red{
+    color:red;
   }
 }
 </style>
