@@ -5,22 +5,23 @@
       <!-- 行内 表单 -->
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="学科编号">
-          <el-input v-model="formInline.user"></el-input>
+          <el-input v-model="formInline.rid"></el-input>
         </el-form-item>
         <el-form-item label="学科名称" class="more-width">
-          <el-input v-model="formInline.user"></el-input>
+          <el-input v-model="formInline.name"></el-input>
         </el-form-item>
         <el-form-item label="创建者">
-          <el-input v-model="formInline.user"></el-input>
+          <el-input v-model="formInline.creater"></el-input>
         </el-form-item>
         <el-form-item label="状态" class="more-width">
-          <el-select v-model="formInline.region" placeholder="请选择状态">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+          <!-- 表单元素数据的绑定 是v-model -->
+          <el-select v-model="formInline.status" placeholder="请选择状态">
+            <el-option label="启用" :value="1"></el-option>
+            <el-option label="禁用" :value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">搜索</el-button>
+          <el-button type="primary" @click="search">搜索</el-button>
           <el-button>清除</el-button>
           <el-button type="primary" icon="el-icon-plus">新增学科</el-button>
         </el-form-item>
@@ -38,7 +39,7 @@
         <el-table-column prop="create_time" label="创建日期"> </el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <span v-if="scope.row.status===0" class="red">禁用</span>
+            <span v-if="scope.row.status === 0" class="red">禁用</span>
             <span v-else>启用</span>
           </template>
         </el-table-column>
@@ -67,31 +68,46 @@
 
 <script>
 // 导入 接口
-import {subject} from '../../../api/api.js'
+import { subject } from "../../../api/api.js";
 export default {
   name: "subject",
   data() {
     return {
+      // 筛选的表格
       formInline: {},
       // 数据
       tableData: [],
       // 页码
-      page:1,
+      page: 1,
       // 页容量
-      limit:10
+      limit: 10
     };
   },
   created() {
     // 调用接口
-    subject.list({
-      page:this.page,
-      limit:this.limit
-    }).then(res=>{
-      window.console.log(res)
-      // 赋值给table
-      this.tableData = res.data.data.items
-    })
+    subject
+      .list({
+        page: this.page,
+        limit: this.limit
+      })
+      .then(res => {
+        // window.console.log(res);
+        // 赋值给table
+        this.tableData = res.data.data.items;
+      });
   },
+  // 方法
+  methods: {
+    search() {
+      // 调用接口 传递筛选条件
+      subject.list({ page: this.page, limit: this.limit,...this.formInline })
+      .then(res=>{
+        // window.console.log(res);
+         // 赋值给table
+        this.tableData = res.data.data.items;
+      })
+    }
+  }
 };
 </script>
 
@@ -107,17 +123,17 @@ export default {
   }
 
   // 分页器的样式
-  .el-pagination{
+  .el-pagination {
     text-align: center;
     margin-top: 30px;
   }
   // card的样式
-  .main-card{
+  .main-card {
     margin-top: 20px;
   }
   // span 变红
-  .red{
-    color:red;
+  .red {
+    color: red;
   }
 }
 </style>
