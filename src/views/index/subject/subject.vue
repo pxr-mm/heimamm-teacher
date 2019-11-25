@@ -55,11 +55,13 @@
       <!-- 分页器 -->
       <el-pagination
         background
-        :current-page="1"
-        :page-sizes="[5, 10, 15, 20]"
-        :page-size="100"
+        :current-page="page"
+        :page-sizes="pageSizes"
+        :page-size="limit"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="36"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
       >
       </el-pagination>
     </el-card>
@@ -80,7 +82,11 @@ export default {
       // 页码
       page: 1,
       // 页容量
-      limit: 10
+      limit: 10,
+      // 页码数组
+      pageSizes: [5, 10, 15, 20],
+      // 总条数
+      total: 0
     };
   },
   created() {
@@ -94,18 +100,47 @@ export default {
         // window.console.log(res);
         // 赋值给table
         this.tableData = res.data.data.items;
+        // 保存 总条数
+        this.total = res.data.data.pagination.total;
       });
   },
   // 方法
   methods: {
+    // 获取数据的逻辑
+    getList(){
+        // 调用接口 传递筛选条件
+      subject
+        .list({ page: this.page, limit: this.limit, ...this.formInline })
+        .then(res => {
+          // 赋值给table
+          this.tableData = res.data.data.items;
+          // 重新设置页容量即可
+          this.total = res.data.data.pagination.total;
+        });
+    },
+    // 筛选逻辑
     search() {
-      // 调用接口 传递筛选条件
-      subject.list({ page: this.page, limit: this.limit,...this.formInline })
-      .then(res=>{
-        // window.console.log(res);
-         // 赋值给table
-        this.tableData = res.data.data.items;
-      })
+      // 跳转到第一页
+      this.page = 1;
+      // 获取数据
+      this.getList();
+    },
+    // 页容量改变
+    handleSizeChange(size) {
+      // 保存起来
+      this.limit = size;
+      // 修改页码
+      // 去第一页
+      this.page = 1;
+      // 重新获取数据
+      this.getList();
+    },
+    // 页码改变
+    handleCurrentChange(current) {
+      // 保存页码
+      this.page = current;
+      // 重新获取数据
+      this.getList();
     }
   }
 };
