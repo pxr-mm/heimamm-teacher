@@ -44,15 +44,19 @@ axios.interceptors.response.use(
     // 判断token
     // if (response.data.code === 0&& response.data.message.indexOf('token')!=-1) {
     if (response.data.code === 0) {
-        // 提示
-        // Message.error('小老弟，伪造token，牛逼啊！')
-        // 直接使用服务器返回的信息
-        Message.error(response.data.message);
+      // 提示
+      // Message.error('小老弟，伪造token，牛逼啊！')
+      // 直接使用服务器返回的信息
+      Message.error(response.data.message);
       // 删除token
       removeToken();
       // 去登录页
       router.push("/login");
       return;
+    }
+    // 如果状态码为200 成功
+    if(response.data.code===200){
+      Message.success(response.data.message);
     }
     return response;
   },
@@ -103,46 +107,46 @@ export function userInfo() {
 
 // 作用域 抽取学科接口
 // subject.add subject.remove
-export const subject ={
+export const subject = {
   // 新增
-  add(data){
+  add(data) {
     return axios({
-      url:"/subject/add",
-      method:"post",
+      url: "/subject/add",
+      method: "post",
       data
-    })
+    });
   },
   // 列表
   // get请求的参数用params来传递
-  list(params){
+  list(params) {
     return axios({
-      url:"/subject/list",
-      method:"get",
+      url: "/subject/list",
+      method: "get",
       params
-    })
+    });
   },
   // 状态
-  status(data){
+  status(data) {
     return axios({
-      url:"/subject/status",
-      method:"post",
+      url: "/subject/status",
+      method: "post",
       data
-    })
+    });
   },
   // 编辑
-  edit(data){
+  edit(data) {
     return axios({
-      url:"/subject/edit",
-      method:"post",
+      url: "/subject/edit",
+      method: "post",
       data
-    })
+    });
   },
   // 删除
-  remove(data){
+  remove(data) {
     return axios({
-      url:"/subject/remove",
-      method:"post",
+      url: "/subject/remove",
+      method: "post",
       data
-    })
-  },
-}
+    });
+  }
+};

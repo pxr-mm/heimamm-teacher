@@ -50,10 +50,12 @@
         </el-table-column>
         <el-table-column label="操作">
           <!-- 插槽 -->
-          <template>
+          <template slot-scope="scope">
             <el-button type="text">编辑</el-button>
-            <el-button type="text">禁用</el-button>
-            <el-button type="text">删除</el-button>
+            <el-button @click="status(scope.row)" type="text">
+              {{ scope.row.status===1?'禁用':'启用' }}
+            </el-button>
+            <el-button @click="remove(scope.row)" type="text">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -201,22 +203,67 @@ export default {
         if (valid) {
           // 成功
           // 调用接口
-          subject.add(this.addForm).then(res=>{
+          subject.add(this.addForm).then(res => {
             // window.console.log(res);
             // 如果成功 提示用户 关闭 对话框
-            if(res.data.code==200){
-              this.addFormVisible =false;
-              this.$message.success(res.data.message);
+            if (res.data.code == 200) {
+              this.addFormVisible = false;
+              // this.$message.success(res.data.message);
               // 重新获取一次
               this.getList();
             }
-          })
+          });
         } else {
           // 失败
-          this.$message.warning("老铁，数据不太对哦")
+          this.$message.warning("老铁，数据不太对哦");
           return false;
         }
       });
+    },
+    // 删除数据的方法
+    remove(data) {
+      // window.console.log(data);
+      this.$confirm("此操作将永久删除该学科, 确定?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          // 接口调用
+          subject
+            .remove({
+              id: data.id
+            })
+            .then(res => {
+              // window.console.log(res);
+              if(res.data.code==200){
+                // 提示
+                // this.$message.success(res.data.message)
+                // 重新获取数据
+                this.getList();
+              }
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    // 启用禁用数据的方法
+    status(data){
+      subject.status({
+        id:data.id,
+        // 三元表单时
+        status: data.status===1?0:1
+      }).then(res=>{
+        // window.console.log(res)
+        if(res.data.code===200){
+          this.getList();
+          // this.$message.success(res.data.message);
+        }
+      })
     }
   }
 };
