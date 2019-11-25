@@ -6,9 +6,11 @@ import { getToken, removeToken } from "../utils/token.js";
 
 // 导入 element-ui的弹框
 import { Message } from "element-ui";
+
 // 导入Vue
-import Vue from 'vue'
-Vue.use(Message);
+// import Vue from 'vue'
+// Vue.use(Message);
+
 // 导入 路由
 import router from "../router/router.js";
 
@@ -40,9 +42,12 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   function(response) {
     // 判断token
+    // if (response.data.code === 0&& response.data.message.indexOf('token')!=-1) {
     if (response.data.code === 0) {
         // 提示
-        Message.error('小老弟，伪造token，牛逼啊！')
+        // Message.error('小老弟，伪造token，牛逼啊！')
+        // 直接使用服务器返回的信息
+        Message.error(response.data.message);
       // 删除token
       removeToken();
       // 去登录页
