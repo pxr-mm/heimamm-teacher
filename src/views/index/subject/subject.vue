@@ -23,7 +23,12 @@
         <el-form-item>
           <el-button type="primary" @click="search">搜索</el-button>
           <el-button>清除</el-button>
-          <el-button type="primary" icon="el-icon-plus">新增学科</el-button>
+          <el-button
+            type="primary"
+            @click="addFormVisible = true"
+            icon="el-icon-plus"
+            >新增学科</el-button
+          >
         </el-form-item>
       </el-form>
     </el-card>
@@ -65,6 +70,39 @@
       >
       </el-pagination>
     </el-card>
+    <!-- 新增对话框 -->
+    <el-dialog title="新增学科" :visible.sync="addFormVisible">
+      <el-form :model="addForm" ref="addForm" :rules="addRules">
+        <el-form-item label="学科编号" prop="rid" :label-width="formLabelWidth">
+          <el-input v-model="addForm.rid" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item
+          label="学科名称"
+          prop="name"
+          :label-width="formLabelWidth"
+        >
+          <el-input v-model="addForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="学科简称" :label-width="formLabelWidth">
+          <el-input v-model="addForm.short_name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="学科简介" :label-width="formLabelWidth">
+          <el-input
+            v-model="addForm.intro"
+            type="textarea"
+            :rows="2"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="学科备注" :label-width="formLabelWidth">
+          <el-input v-model="addForm.remark" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitAdd">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -86,7 +124,22 @@ export default {
       // 页码数组
       pageSizes: [5, 10, 15, 20],
       // 总条数
-      total: 0
+      total: 0,
+      // 新增表单的数据
+      addForm: {},
+      // 新增表单是否显示
+      addFormVisible: false,
+      // label的宽度不设置不能都在一行
+      formLabelWidth: "100px",
+      // 表单验证规则
+      addRules: {
+        rid: [
+          { required: true, message: "学科编号不能为空哦", trigger: "blur" }
+        ],
+        name: [
+          { required: true, message: "学科名称不能为空哦", trigger: "blur" }
+        ]
+      }
     };
   },
   created() {
@@ -107,8 +160,8 @@ export default {
   // 方法
   methods: {
     // 获取数据的逻辑
-    getList(){
-        // 调用接口 传递筛选条件
+    getList() {
+      // 调用接口 传递筛选条件
       subject
         .list({ page: this.page, limit: this.limit, ...this.formInline })
         .then(res => {
@@ -141,6 +194,29 @@ export default {
       this.page = current;
       // 重新获取数据
       this.getList();
+    },
+    // 提交新增表单
+    submitAdd() {
+      this.$refs.addForm.validate(valid => {
+        if (valid) {
+          // 成功
+          // 调用接口
+          subject.add(this.addForm).then(res=>{
+            // window.console.log(res);
+            // 如果成功 提示用户 关闭 对话框
+            if(res.data.code==200){
+              this.addFormVisible =false;
+              this.$message.success(res.data.message);
+              // 重新获取一次
+              this.getList();
+            }
+          })
+        } else {
+          // 失败
+          this.$message.warning("老铁，数据不太对哦")
+          return false;
+        }
+      });
     }
   }
 };
