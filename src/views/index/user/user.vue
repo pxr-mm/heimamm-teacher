@@ -35,11 +35,11 @@
       <el-table :data="tableData" style="width: 100%" stripe border>
         <el-table-column type="index" label="序号" width="60px">
         </el-table-column>
-        <el-table-column prop="rid" label="用户名"> </el-table-column>
-        <el-table-column prop="name" label="电话"> </el-table-column>
-        <el-table-column prop="short_name" label="邮箱"> </el-table-column>
-        <el-table-column prop="creater" label="角色"> </el-table-column>
-        <el-table-column prop="create_time" label="备注"> </el-table-column>
+        <el-table-column prop="name" label="用户名"> </el-table-column>
+        <el-table-column prop="phone" label="电话"> </el-table-column>
+        <el-table-column prop="email" label="邮箱"> </el-table-column>
+        <el-table-column prop="role" label="角色"> </el-table-column>
+        <el-table-column prop="remark" label="备注"> </el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
             <span v-if="scope.row.status === 0" class="red">禁用</span>
@@ -146,6 +146,8 @@
 </template>
 
 <script>
+// 导入接口文件
+import {user} from '../../../api/api.js'
 export default {
   name: "user",
   // 数据
@@ -166,7 +168,14 @@ export default {
       // 验证规则
       addRules: {}
     };
-  }
+  },
+  //生命周期钩子中获取数据
+  created() {
+    user.list().then(res=>{
+      // window.console.log(res);
+      this.tableData = res.data.data.items;
+    })
+  },
 };
 </script>
 
