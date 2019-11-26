@@ -111,27 +111,30 @@
       class="edit-dialog"
       :visible.sync="editFormVisible"
     >
-      <el-form :model="editForm" ref="editForm" :rules="addRules">
-        <el-form-item label="用户编号" prop="rid" :label-width="formLabelWidth">
-          <el-input v-model="editForm.rid" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item
-          label="用户名称"
-          prop="name"
-          :label-width="formLabelWidth"
-        >
+      <el-form :model="editForm" ref="editForm" :rules="addRules" status-icon>
+        <el-form-item label="用户名" prop="name" :label-width="formLabelWidth">
           <el-input v-model="editForm.name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="用户简称" :label-width="formLabelWidth">
-          <el-input v-model="editForm.short_name" autocomplete="off"></el-input>
+        <el-form-item label="邮箱" prop="email" :label-width="formLabelWidth">
+          <el-input v-model="editForm.email" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="用户简介" :label-width="formLabelWidth">
-          <el-input
-            v-model="editForm.intro"
-            type="textarea"
-            :rows="2"
-            autocomplete="off"
-          ></el-input>
+        <el-form-item label="电话" prop="phone" :label-width="formLabelWidth">
+          <el-input v-model="editForm.phone" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="角色" prop="role" :label-width="formLabelWidth">
+          <!-- 表单元素数据的绑定 是v-model -->
+          <el-select v-model="editForm.role" placeholder="请选择角色">
+            <el-option label="管理员" value="管理员"></el-option>
+            <el-option label="老师" value="老师"></el-option>
+            <el-option label="学生" value="学生"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="状态" :label-width="formLabelWidth">
+          <!-- 表单元素数据的绑定 是v-model -->
+          <el-select v-model="editForm.status" placeholder="请选择状态">
+            <el-option label="启用" :value="1"></el-option>
+            <el-option label="禁用" :value="0"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="用户备注" :label-width="formLabelWidth">
           <el-input v-model="editForm.remark" autocomplete="off"></el-input>
@@ -163,10 +166,40 @@ export default {
       editForm: {},
       // 是否显示新增框
       addFormVisible: false,
+      // 是否显示编辑表单
+      editFormVisible: false,
       // label的宽度
       formLabelWidth: "80px",
       // 验证规则
-      addRules: {},
+      addRules: {
+        name: [{ required: true, message: "用户名不能为空" }],
+        email: [
+          { required: true, message: "邮箱不能为空" },
+          {
+            validator: (rules, value, callback) => {
+              // value是值
+              if (!value) {
+                callback(new Error("邮箱不能为空"));
+              } else {
+                // 格式验证
+                const reg = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
+                setTimeout(() => {
+                  // 验证
+                  if (reg.test(value)) {
+                    // 对的
+                    callback();
+                  } else {
+                    // 错误
+                    callback(new Error("邮箱格式不对哦"));
+                  }
+                }, 1000);
+              }
+            }
+          }
+        ],
+        phone: [{ required: true, message: "电话不能为空" }],
+        role: [{ required: true, message: "角色不能为空" }]
+      },
       // 分页相关
       // 页码
       page: 1,
@@ -217,11 +250,11 @@ export default {
       // 重新获取数据
       this.getList();
     },
-       // 启用禁用数据的方法
+    // 启用禁用数据的方法
     status(data) {
       user
         .status({
-          id: data.id,
+          id: data.id
           // 三元表单时
           // status: data.status === 1 ? 0 : 1
         })
@@ -233,6 +266,12 @@ export default {
           }
         });
     },
+    // 进入编辑状态
+    showEdit(data) {
+      this.editForm = JSON.parse(JSON.stringify(data));
+      // 弹框
+      this.editFormVisible = true;
+    }
   }
 };
 </script>
