@@ -13,7 +13,9 @@ import { Message } from "element-ui";
 import router from "../router/router.js";
 
 // 统一设置 基地址
-axios.defaults.baseURL = "http://183.237.67.218:3002";
+// axios.defaults.baseURL = "http://183.237.67.218:3002";
+// axios.defaults.baseURL = "http://127.0.0.1/heimamm/public";
+axios.defaults.baseURL = process.env.VUE_APP_BASEURL;
 // 统一设置 跨域携带cookie
 axios.defaults.withCredentials = true;
 
