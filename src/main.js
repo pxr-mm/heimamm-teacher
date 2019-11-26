@@ -12,10 +12,15 @@ import 'element-ui/lib/theme-chalk/index.css';
 // 导入自己的全局样式
 import './style/base.less'
 
+
 // use一下
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+
+// 导入 全局过滤器 必须在 new Vue示例之前
+// 只是为了执行，导入即可
+import   './filters/filters.js';
 
 new Vue({
   render: h => h(App),
