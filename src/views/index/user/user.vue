@@ -216,7 +216,23 @@ export default {
       this.page = current;
       // 重新获取数据
       this.getList();
-    }
+    },
+       // 启用禁用数据的方法
+    status(data) {
+      user
+        .status({
+          id: data.id,
+          // 三元表单时
+          // status: data.status === 1 ? 0 : 1
+        })
+        .then(res => {
+          // window.console.log(res)
+          if (res.data.code === 200) {
+            this.getList();
+            // this.$message.success(res.data.message);
+          }
+        });
+    },
   }
 };
 </script>
