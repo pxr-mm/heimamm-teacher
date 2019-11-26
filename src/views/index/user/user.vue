@@ -271,6 +271,30 @@ export default {
       this.editForm = JSON.parse(JSON.stringify(data));
       // 弹框
       this.editFormVisible = true;
+    },
+    // 保存修改
+    submitEdit() {
+      // 编辑表单
+      // this.$refs[ruleform] 解析ruleform的值 作为字符串来获取属性
+      // this.$refs.editForm  editForm作为属性名
+      this.$refs.editForm.validate(valid => {
+        if (valid) {
+          // 成功
+          // 调用接口
+          user.edit(this.editForm).then(res => {
+            // 如果成功 提示用户 关闭 对话框
+            if (res.data.code == 200) {
+              this.editFormVisible = false;
+              // 重新获取一次
+              this.getList();
+            }
+          });
+        } else {
+          // 失败
+          this.$message.warning("老铁，数据不太对哦");
+          return false;
+        }
+      });
     }
   }
 };
