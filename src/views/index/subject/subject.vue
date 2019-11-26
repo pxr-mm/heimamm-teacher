@@ -368,18 +368,6 @@ export default {
     color: red;
   }
 
-  // 编辑器框
-  .edit-dialog {
-    .el-dialog__header {
-      background-color: deepskyblue;
-      text-align: center;
-      .el-dialog__title {
-        color: white;
-      }
-    }
-    .el-input__inner {
-      width: 100%;
-    }
-  }
+
 }
 </style>

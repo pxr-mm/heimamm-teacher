@@ -10,7 +10,7 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
 // 导入自己的全局样式
-import './style/base.css'
+import './style/base.less'
 
 // use一下
 Vue.use(ElementUI)
