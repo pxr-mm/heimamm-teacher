@@ -147,7 +147,7 @@
 
 <script>
 // 导入接口文件
-import {user} from '../../../api/api.js'
+import { user } from "../../../api/api.js";
 export default {
   name: "user",
   // 数据
@@ -166,16 +166,58 @@ export default {
       // label的宽度
       formLabelWidth: "80px",
       // 验证规则
-      addRules: {}
+      addRules: {},
+      // 分页相关
+      // 页码
+      page: 1,
+      // 页容量
+      limit: 10,
+      // 页码数组
+      pageSizes: [5, 10, 15, 20],
+      // 总条数
+      total: 0
     };
   },
   //生命周期钩子中获取数据
   created() {
-    user.list().then(res=>{
+    user.list().then(res => {
       // window.console.log(res);
       this.tableData = res.data.data.items;
-    })
+      // 保存总条数
+      this.total = res.data.data.pagination.total;
+    });
   },
+  methods: {
+    // 获取数据的逻辑
+    getList() {
+      // 调用接口 传递筛选条件
+      user
+        .list({ page: this.page, limit: this.limit, ...this.formInline })
+        .then(res => {
+          // 赋值给table
+          this.tableData = res.data.data.items;
+          // 重新设置页容量即可
+          this.total = res.data.data.pagination.total;
+        });
+    },
+    // 页容量改变
+    handleSizeChange(size) {
+      // 保存起来
+      this.limit = size;
+      // 修改页码
+      // 去第一页
+      this.page = 1;
+      // 重新获取数据
+      this.getList();
+    },
+    // 页码改变
+    handleCurrentChange(current) {
+      // 保存页码
+      this.page = current;
+      // 重新获取数据
+      this.getList();
+    }
+  }
 };
 </script>
 
