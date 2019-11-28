@@ -6,7 +6,8 @@
 <script>
 export default {
   // 组件名
-  name:"app"
+  name:"app",
+
 }
 </script>
 
