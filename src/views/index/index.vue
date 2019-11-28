@@ -64,7 +64,7 @@
 
 <script>
 // 导入 获取token的函数
-import { getToken,removeToken } from "../../utils/token.js";
+import {removeToken } from "../../utils/token.js";
 // 导入 用户信息方法
 import {userInfo} from '../../api/api.js';
 export default {
@@ -81,14 +81,14 @@ export default {
   },
   // 生命周期钩子
   beforeCreate() {
-    // 判断token是否存在
-    const token = getToken();
-    if (!token) {
-      // 提示用户
-      this.$message.error("小老弟，你木有登录哦，先去登录吧");
-      // 不存在 去登录页
-      this.$router.push("/login");
-    }
+    // // 判断token是否存在
+    // const token = getToken();
+    // if (!token) {
+    //   // 提示用户
+    //   this.$message.error("小老弟，你木有登录哦，先去登录吧");
+    //   // 不存在 去登录页
+    //   this.$router.push("/login");
+    // }
   },
   // 创建钩子
   created() {

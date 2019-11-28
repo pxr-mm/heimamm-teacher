@@ -6,6 +6,9 @@ import Vue from "vue";
 // 导入Element-ui的弹框
 import { Message } from "element-ui";
 
+// 导入 获取token的方法
+import {getToken} from '../utils/token.js'
+
 // 重写push方法 屏蔽 重复跳转错误
 // 解决两次访问相同路由地址报错
 const originalPush = VueRouter.prototype.push;
@@ -13,7 +16,7 @@ VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err);
 };
 
-// use
+// use 一下
 Vue.use(VueRouter);
 
 // 导入 登录页面组件
@@ -80,16 +83,22 @@ const whitePaths = ["/login"];
 // 导航守卫
 router.beforeEach((to, from, next) => {
   // 判断是否存在 白名单中 to.path 路径比如 /index /login
-  if (whitePaths.indexOf(to.path) == -1) {
-    // 不存在于白名单中
-    // 提示用户
-    Message.warning("请先登录！");
-    // 去登录页
-    return next("/login");
+  // 白名单 放走
+  if(whitePaths.indexOf(to.path)!=-1){
+    // 放走
+   return next()
   }
+  // 登录状态 token
+  if(getToken()){
+    // token存在
+    // 放走
+    return next();
+  }
+ 
+  // 说明不是白名单
+  Message("请先登录");
+  next("/login")
 
-  // 到这里说明可以访问
-  next();
 });
 
 // 挂载到Vue实例上
