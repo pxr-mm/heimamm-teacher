@@ -7,7 +7,13 @@ import Vue from "vue";
 import { Message } from "element-ui";
 
 // 导入 获取token的方法
-import {getToken} from '../utils/token.js'
+import { getToken } from "../utils/token.js";
+
+// 导入 获取用户信息的逻辑
+import { userInfo } from "../api/api.js";
+
+// 导入 仓库
+import store from "../store/store.js";
 
 // 重写push方法 屏蔽 重复跳转错误
 // 解决两次访问相同路由地址报错
@@ -78,27 +84,32 @@ const router = new VueRouter({
   routes
 });
 
-// 定义白名单 后续直接使用性能好一些
+// 定义白名单(不登陆也可以访问) 后续直接使用性能好一些
 const whitePaths = ["/login"];
 // 导航守卫
 router.beforeEach((to, from, next) => {
   // 判断是否存在 白名单中 to.path 路径比如 /index /login
   // 白名单 放走
-  if(whitePaths.indexOf(to.path)!=-1){
-    // 放走
-   return next()
-  }
-  // 登录状态 token
-  if(getToken()){
-    // token存在
+  if (whitePaths.indexOf(to.path) != -1) {
     // 放走
     return next();
   }
- 
-  // 说明不是白名单
+  // 必须登录才可以进去
+  // token是否存在的判断
+  if (getToken()) {
+    // 存在
+    // 调用接口验证对错 异步操作
+    return userInfo().then(res => {
+      // 用户信息获取成功 token木有问题
+      store.commit("CHANGEINFO", res.data.data);
+      // 放走
+      next();
+    });
+    // return next();
+  }
+  // 没登录，同时木有token
   Message("请先登录");
-  next("/login")
-
+  next("/login");
 });
 
 // 挂载到Vue实例上

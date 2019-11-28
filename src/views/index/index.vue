@@ -14,8 +14,8 @@
       </div>
       <div class="right">
         <!-- 头像 -->
-        <img class="avatar" :src="avatar" alt="" />
-        <span class="name">{{ name }},您好</span>
+        <img class="avatar" :src="getIcon" alt="" />
+        <span class="name">{{ getName }},您好</span>
         <el-button class="logout" @click="logout" size="mini" type="primary"
           >退出</el-button
         >
@@ -66,7 +66,7 @@
 // 导入 获取token的函数
 import {removeToken } from "../../utils/token.js";
 // 导入 用户信息方法
-import {userInfo} from '../../api/api.js';
+// import {userInfo} from '../../api/api.js';
 export default {
   name: "index",
   data() {
@@ -92,22 +92,22 @@ export default {
   },
   // 创建钩子
   created() {
-    userInfo().then(res=>{
-      // // 判断token
-      // if(res.data.code===0){
-      //   // token有问题
-      //   this.$message.error("小老弟，伪造token，牛逼啊！");
-      //   // 删除token
-      //   removeToken();
-      //   // 去登录页
-      //   this.$router.push("/login")
-      //   return 
-      // }
-      // window.console.log(res);
-      // 保存到data中
-      this.avatar = `${process.env.VUE_APP_BASEURL}/${res.data.data.avatar}`
-      this.name=res.data.data.name
-    })
+    // userInfo().then(res=>{
+    //   // // 判断token
+    //   // if(res.data.code===0){
+    //   //   // token有问题
+    //   //   this.$message.error("小老弟，伪造token，牛逼啊！");
+    //   //   // 删除token
+    //   //   removeToken();
+    //   //   // 去登录页
+    //   //   this.$router.push("/login")
+    //   //   return 
+    //   // }
+    //   // window.console.log(res);
+    //   // 保存到data中
+    //   this.avatar = `${process.env.VUE_APP_BASEURL}/${res.data.data.avatar}`
+    //   this.name=res.data.data.name
+    // })
   },
   methods: {
     // 退出
@@ -120,6 +120,8 @@ export default {
         .then(() => {
             // 删除token
             removeToken();
+            // 删除仓库的数据即可
+            this.$store.commit("CHANGEINFO",undefined);
             // 去登录页
             this.$router.push('/login');
         })
@@ -130,7 +132,18 @@ export default {
           });
         });
     }
-  }
+  },
+  // 计算属性 获取用户信息
+  computed: {
+    // 获取名字
+    getName(){
+      return this.$store.state.userInfo.name;
+    },
+    // 获取头像
+    getIcon(){
+      return  process.env.VUE_APP_BASEURL+'/'+this.$store.state.userInfo.avatar
+    }
+  },
 };
 </script>
 
