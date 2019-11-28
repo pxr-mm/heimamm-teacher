@@ -53,27 +53,45 @@ const routes = [
   {
     path: "/index",
     component: index,
+    meta:{
+      roles:['管理员','老师','学生']
+    },
     // 嵌套路由
     children: [
       {
         path: "subject", // 匹配的是 /index/subject
-        component: subject
+        component: subject,
+        meta:{
+          roles:['管理员','老师','学生']
+        }
       },
       {
         path: "enterprise", // 匹配的是 /index/enterprise
-        component: enterprise
+        component: enterprise,
+        meta:{
+          roles:['管理员','老师']
+        }
       },
       {
         path: "dataRecord", // 匹配的是 /index/dataRecord
-        component: dataRecord
+        component: dataRecord,
+        meta:{
+          roles:['管理员','老师']
+        }
       },
       {
         path: "userList", // 匹配的是 /index/userList
-        component: userList
+        component: userList,
+        meta:{
+          roles:['管理员']
+        }
       },
       {
         path: "questionList", // 匹配的是 /index/questionList
-        component: questionList
+        component: questionList,
+        meta:{
+          roles:['管理员','老师']
+        }
       }
     ]
   }
@@ -102,6 +120,18 @@ router.beforeEach((to, from, next) => {
     return userInfo().then(res => {
       // 用户信息获取成功 token木有问题
       store.commit("CHANGEINFO", res.data.data);
+      // 判断状态
+      if(res.data.data.status===0){
+        // 禁用
+        Message.warning("请等待管理员启用你！！");
+        return next("/login");
+      }
+      // 用户启用状态 权限判断
+      if(to.meta.roles.indexOf(res.data.data.role)==-1){
+        // 不存在 说明 没有权限
+        Message.warning("哥们，你不允许访问这个页面");
+        return 
+      }
       // 放走
       next();
     });
