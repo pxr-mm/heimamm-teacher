@@ -329,6 +329,8 @@ export default {
               // 调用工具函数 保存token
               setToken(res.data.data.token)
               // window.console.log(res);
+              // 保存用户信息 到仓库中
+              this.$store.commit("CHANGEINFO",res.data.data);
             } else {
               // 失败
               this.$message.warning("登录失败了哦");
