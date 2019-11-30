@@ -199,6 +199,9 @@
         <!-- 标题富文本 -->
         <el-form-item label="试题标题" prop="title"></el-form-item>
         <div ref="titleEditor"></div>
+        <!-- 答案富文本 -->
+        <el-form-item label="试题答案" prop="answer_analyze"></el-form-item>
+        <div ref="answerEditor"></div>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -277,9 +280,12 @@ export default {
       options: regionData,
       // 标题富文本
       titleEditor: undefined,
+      // 答案富文本
+      answerEditor: undefined,
       // 新增表单验证规则
       addFormRules: {
-        title: [{ required: true, message: "标题不能为空哦！" }]
+        title: [{ required: true, message: "标题不能为空哦！" }],
+        answer_analyze: [{ required: true, message: "答案解析不能为空哦" }]
       }
     };
   },
@@ -350,7 +356,7 @@ export default {
     },
     // 对话框打开的方法
     opened() {
-      // 非空判断
+      // 非空判断 标题富文本
       if (!this.titleEditor) {
         this.titleEditor = new WangEditor(this.$refs.titleEditor);
         // 调整设置
@@ -362,6 +368,19 @@ export default {
         };
         // 创建
         this.titleEditor.create();
+      }
+            // 非空判断 标题富文本
+      if (!this.answerEditor) {
+        this.answerEditor = new WangEditor(this.$refs.answerEditor);
+        // 调整设置
+        this.answerEditor.customConfig.onchange = html => {
+          // html 即变化之后的内容
+          // window.console.log(html);
+          // 设置给标题
+          this.addForm.answer_analyze = html;
+        };
+        // 创建
+        this.answerEditor.create();
       }
     },
     // 提交数据
