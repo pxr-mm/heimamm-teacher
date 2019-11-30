@@ -196,6 +196,22 @@
           >
           </el-cascader>
         </el-form-item>
+        <!-- 题型 -->
+        <el-form-item label="题型" class="more-width">
+          <el-radio-group v-model="addForm.type">
+            <el-radio label="单选">单选</el-radio>
+            <el-radio label="多选">多选</el-radio>
+            <el-radio label="简答">简答</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <!-- 难度 -->
+        <el-form-item label="难度" class="more-width">
+          <el-radio-group v-model="addForm.difficulty">
+            <el-radio label="简单">简单</el-radio>
+            <el-radio label="一般">一般</el-radio>
+            <el-radio label="困难">困难</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <!-- 标题富文本 -->
         <el-form-item label="试题标题" prop="title"></el-form-item>
         <div ref="titleEditor"></div>
@@ -369,7 +385,7 @@ export default {
         // 创建
         this.titleEditor.create();
       }
-            // 非空判断 标题富文本
+      // 非空判断 标题富文本
       if (!this.answerEditor) {
         this.answerEditor = new WangEditor(this.$refs.answerEditor);
         // 调整设置
