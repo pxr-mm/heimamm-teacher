@@ -149,6 +149,7 @@
       title="新增试题"
       fullscreen=""
       :visible.sync="addFormVisible"
+      @opened="opened"
     >
       <el-form :model="addForm">
         <!-- 学科 -->
@@ -191,10 +192,13 @@
             size="large"
             :options="options"
             v-model="addForm.city"
-            :props="{value:'label'}"
+            :props="{ value: 'label' }"
           >
           </el-cascader>
         </el-form-item>
+        <!-- 标题富文本 -->
+        <el-form-item label="试题标题"> </el-form-item>
+        <div ref="titleEditor"></div>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -211,6 +215,8 @@
 import { question, subject, enterprise } from "../../../api/api.js";
 // 导入数据 城市数据
 import { regionData } from "element-china-area-data";
+// 导入 富文本
+import WangEditor from "wangeditor";
 export default {
   name: "question",
   data() {
@@ -270,7 +276,9 @@ export default {
       // 新增框是否显示
       addFormVisible: false,
       // 省市区数据
-      options: regionData
+      options: regionData,
+      // 标题富文本
+      titleEditor: undefined
     };
   },
   created() {
@@ -337,6 +345,22 @@ export default {
       this.page = current;
       // 重新获取数据
       this.getList();
+    },
+    // 对话框打开的方法
+    opened() {
+      // 非空判断
+      if (!this.titleEditor) {
+        this.titleEditor = new WangEditor(this.$refs.titleEditor);
+        // 调整设置
+        this.titleEditor.customConfig.onchange = (html)=>{
+          // html 即变化之后的内容
+          // window.console.log(html);
+          // 设置给标题
+          this.addForm.title = html;
+        };
+        // 创建
+        this.titleEditor.create();
+      }
     }
   }
 };
