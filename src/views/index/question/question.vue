@@ -216,7 +216,11 @@
         <el-form-item label="试题标题" prop="title"></el-form-item>
         <div ref="titleEditor"></div>
         <!-- 选项区域 单选 -->
-        <el-form-item v-if="addForm.type==='单选'" label="单选" class="more-width">
+        <el-form-item
+          v-if="addForm.type === '单选'"
+          label="单选"
+          class="more-width"
+        >
           <el-radio-group v-model="addForm.single_select_answer">
             <div class="select-box">
               <el-radio label="A">A</el-radio>
@@ -297,7 +301,11 @@
           </el-radio-group>
         </el-form-item>
         <!-- 选项区域 多选 -->
-        <el-form-item v-if="addForm.type==='多选'" label="多选" class="more-width">
+        <el-form-item
+          v-if="addForm.type === '多选'"
+          label="多选"
+          class="more-width"
+        >
           <el-checkbox-group v-model="addForm.multiple_select_answer">
             <div class="select-box">
               <el-checkbox label="A">A</el-checkbox>
@@ -377,9 +385,36 @@
             </div>
           </el-checkbox-group>
         </el-form-item>
+        <!-- 视频上传区域 -->
+        <el-form-item>
+          <el-upload
+            class="upload-demo"
+            :action="actions"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :before-upload="beforeVideoUpload"
+            :on-success="videoSuccess"
+            list-type="picture"
+          >
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">
+              只能上传视频
+            </div>
+          </el-upload>
+        </el-form-item>
+
         <!-- 答案富文本 -->
         <el-form-item label="试题答案" prop="answer_analyze"></el-form-item>
         <div ref="answerEditor"></div>
+
+        <!-- 备注 -->
+        <el-form-item label="试题备注">
+          <el-input
+            v-model="addForm.remark"
+            type="textarea"
+            rows="2"
+          ></el-input>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -452,7 +487,7 @@ export default {
         video: "upload/20191129/bd666ff11c11cc01f494d6ba49757a64.png",
         remark: "好好吃东西哦",
         // 多选选项
-        multiple_select_answer:[]
+        multiple_select_answer: []
       },
       // 新增框是否显示
       addFormVisible: false,
@@ -572,14 +607,72 @@ export default {
     },
     // 提交数据
     submitAdd() {
-      this.$refs.addForm.validate(valid => {
-        if (valid) {
-          window.alert("submit!");
-        } else {
-          window.console.log("error submit!!");
-          return false;
-        }
-      });
+      this.$confirm("你即将要往服务器加一道题了哦", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          // 验证
+          this.$refs.addForm.validate(valid => {
+            if (valid) {
+              // 提交
+              question.add(this.addForm).then(res => {
+                // window.console.log(res);
+                if (res.data.code === 200) {
+                  // 关闭对话框
+                  this.addFormVisible = false;
+                  // 清空数据
+                  // this.$refs.addForm.resetFields();
+                  for (const key in this.addForm) {
+                    //  this.addForm[key]
+                    if (key === "city") {
+                      this.addForm[key] = [];
+                    } else if (key === "multiple_select_answer") {
+                      this.addForm[key] = [];
+                    } else if (key === "select_options") {
+                      this.addForm[key] = [
+                        {
+                          label: "A",
+                          text: "",
+                          image: ""
+                        },
+                        {
+                          label: "B",
+                          text: "",
+                          image: ""
+                        },
+                        {
+                          label: "C",
+                          text: "",
+                          image: ""
+                        },
+                        {
+                          label: "D",
+                          text: "",
+                          image: ""
+                        }
+                      ];
+                    }else{
+                      this.addForm[key]=''
+                    }
+                  }
+                  // 重新获取数据
+                  this.getList();
+                }
+              });
+            } else {
+              this.$message.warning("表单验证失败");
+              return false;
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消提交"
+          });
+        });
     },
     // 上传成功
     aAvatarSuccess(res, file) {
@@ -622,6 +715,33 @@ export default {
         this.$message.error("上传头像图片大小不能超过 2MB!");
       }
       return isJPG && isLt2M;
+    },
+    // 视频上传之前
+    beforeVideoUpload(file) {
+      window.console.log(file);
+      const isJPG = file.type === "video/mp4";
+      const isLt2M = file.size / 1024 / 1024 < 8;
+
+      if (!isJPG) {
+        this.$message.error("上传视频只能是 MP4 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传视频大小不能超过 8MB!");
+      }
+      return isJPG && isLt2M;
+    },
+    // 视频上传成功
+    videoSuccess(res) {
+      // window.console.log(res);
+      // 保存视频地址
+      this.addForm.video = res.data.url;
+    },
+    // 预览的逻辑
+    handleRemove(file, fileList) {
+      window.console.log(file, fileList);
+    },
+    handlePreview(file) {
+      window.console.log(file);
     }
   }
 };
@@ -692,7 +812,7 @@ export default {
       }
     }
 
-    .el-form-item__content{
+    .el-form-item__content {
       margin-top: 30px;
     }
   }
