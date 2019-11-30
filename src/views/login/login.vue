@@ -44,6 +44,7 @@ f<template>
                 placeholder="请输入验证码"
                 prefix-icon="el-icon-key"
                 v-model="loginForm.captcha"
+                @keyup.enter.native ="submitForm('loginForm')"
               >
               </el-input>
             </el-col>
@@ -289,6 +290,10 @@ export default {
   },
   // 方法
   methods: {
+    // 回车绑定的事件
+    submit(){
+      window.console.log('submit')
+    },
     // 点击登录
     submitForm(formName) {
       // 布尔判断 如果为false

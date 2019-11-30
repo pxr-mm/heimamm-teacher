@@ -108,7 +108,7 @@ const whitePaths = ["/login"];
 router.beforeEach((to, from, next) => {
   // 判断是否存在 白名单中 to.path 路径比如 /index /login
   // 白名单 放走
-  if (whitePaths.indexOf(to.path) != -1) {
+  if (whitePaths.includes(to.path)===true) {
     // 放走
     return next();
   }

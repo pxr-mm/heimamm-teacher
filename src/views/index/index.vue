@@ -32,23 +32,23 @@
           class="el-menu-vertical-demo"
           router
         >
-          <el-menu-item v-if="['管理员','老师'].indexOf(getRole)!=-1" index="/index/dataRecord">
+          <el-menu-item v-if="['管理员','老师'].includes(getRole)" index="/index/dataRecord">
             <i class="el-icon-pie-chart"></i>
             <span slot="title">数据概览</span>
           </el-menu-item>
-          <el-menu-item v-if="['管理员'].indexOf(getRole)!=-1" index="/index/userList">
+          <el-menu-item v-if="['管理员'].includes(getRole)" index="/index/userList">
             <i class="el-icon-user"></i>
             <span slot="title">用户列表</span>
           </el-menu-item>
-          <el-menu-item v-if="['管理员','老师'].indexOf(getRole)!=-1" index="/index/questionList">
+          <el-menu-item v-if="['管理员','老师'].includes(getRole)" index="/index/questionList">
             <i class="el-icon-edit-outline"></i>
             <span slot="title">题库列表</span>
           </el-menu-item>
-          <el-menu-item v-if="['管理员','老师'].indexOf(getRole)!=-1" index="/index/enterprise">
+          <el-menu-item v-if="['管理员','老师'].includes(getRole)" index="/index/enterprise">
             <i class="el-icon-office-building"></i>
             <span slot="title">企业列表</span>
           </el-menu-item>
-          <el-menu-item v-if="['管理员','老师','学生'].indexOf(getRole)!=-1" index="/index/subject">
+          <el-menu-item v-if="['管理员','老师','学生'].includes(getRole)" index="/index/subject">
             <i class="el-icon-notebook-2"></i>
             <span slot="title">学科列表</span>
           </el-menu-item>
