@@ -144,12 +144,17 @@
     </el-card>
 
     <!-- 新增对话框 -->
-    <el-dialog class="add-dialog" title="新增试题" fullscreen="" :visible.sync="addFormVisible">
+    <el-dialog
+      class="add-dialog"
+      title="新增试题"
+      fullscreen=""
+      :visible.sync="addFormVisible"
+    >
       <el-form :model="addForm">
         <!-- 学科 -->
         <el-form-item label="学科" class="more-width">
           <!-- 表单元素数据的绑定 是v-model -->
-          <el-select v-model="formInline.subject" placeholder="请选择学科">
+          <el-select v-model="addForm.subject" placeholder="请选择学科">
             <el-option
               v-for="item in subjectArr"
               :label="item.name"
@@ -162,17 +167,16 @@
 
         <el-form-item label="阶段" class="more-width">
           <!-- 表单元素数据的绑定 是v-model -->
-          <el-select v-model="formInline.step" placeholder="请选择阶段">
+          <el-select v-model="addForm.step" placeholder="请选择阶段">
             <el-option label="初级" value="初级"></el-option>
             <el-option label="中级" value="中级"></el-option>
             <el-option label="高级" value="高级"></el-option>
           </el-select>
         </el-form-item>
         <!-- 企业 -->
-
         <el-form-item label="企业" class="more-width">
           <!-- 表单元素数据的绑定 是v-model -->
-          <el-select v-model="formInline.enterprise" placeholder="请选择企业">
+          <el-select v-model="addForm.enterprise" placeholder="请选择企业">
             <el-option
               v-for="item in enterpriseArr"
               :label="item.name"
@@ -182,6 +186,15 @@
           </el-select>
         </el-form-item>
         <!-- 城市 -->
+        <el-form-item label="城市" class="more-width">
+          <el-cascader
+            size="large"
+            :options="options"
+            v-model="addForm.city"
+            :props="{value:'label'}"
+          >
+          </el-cascader>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -196,6 +209,8 @@
 <script>
 // 导入接口
 import { question, subject, enterprise } from "../../../api/api.js";
+// 导入数据 城市数据
+import { regionData } from "element-china-area-data";
 export default {
   name: "question",
   data() {
@@ -217,9 +232,45 @@ export default {
       // 企业列表
       enterpriseArr: [],
       // 新增的表格数据
-      addForm:{},
+      addForm: {
+        type: "单选",
+        city: ["天津市", "市辖区"],
+        title: "",
+        answer_analyze: "",
+        select_options: [
+          {
+            label: "A",
+            text: "狗不理",
+            image: "upload/20191129/fd5f03a07d95e3948860240564b180e4.jpeg"
+          },
+          {
+            label: "B",
+            text: "猫不理",
+            image: "upload/20191129/e93e7bb72accda7f3159cdabc4203991.jpeg"
+          },
+          {
+            label: "C",
+            text: "麻花",
+            image: "upload/20191129/b7caf98be9d0aa6764b0112ba0dfa19e.jpeg"
+          },
+          {
+            label: "D",
+            text: "炸酱面",
+            image: "upload/20191129/4067f19ab53a5e8388ad3459e23110f0.jpeg"
+          }
+        ],
+        subject: 11,
+        step: "初级",
+        enterprise: 15,
+        difficulty: "简单",
+        single_select_answer: "A",
+        video: "upload/20191129/bd666ff11c11cc01f494d6ba49757a64.png",
+        remark: "好好吃东西哦"
+      },
       // 新增框是否显示
-      addFormVisible:false
+      addFormVisible: false,
+      // 省市区数据
+      options: regionData
     };
   },
   created() {
@@ -329,15 +380,15 @@ export default {
   }
 
   // 新增 盒子
-  .add-dialog{
-    .el-form{
+  .add-dialog {
+    .el-form {
       width: 50%;
       margin: 0 auto;
-      .el-input__inner{
+      .el-input__inner {
         width: 364px;
       }
     }
-    .el-dialog__footer{
+    .el-dialog__footer {
       text-align: center;
     }
   }
