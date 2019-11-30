@@ -77,7 +77,7 @@
 
         <el-form-item>
           <el-button type="primary" @click="search">搜索</el-button>
-          <el-button>清除</el-button>
+          <el-button @click="formInline={}">清除</el-button>
           <el-button
             type="primary"
             @click="addFormVisible = true"
