@@ -4,13 +4,46 @@
     <el-card>
       <!-- 行内 表单 -->
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item label="问题编号">
-          <el-input v-model="formInline.rid"></el-input>
+        <el-form-item label="学科" class="more-width">
+          <!-- 表单元素数据的绑定 是v-model -->
+          <el-select v-model="formInline.status" placeholder="请选择学科">
+            <el-option label="启用" :value="1"></el-option>
+            <el-option label="禁用" :value="0"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="问题名称" class="more-width">
-          <el-input v-model="formInline.name"></el-input>
+        <el-form-item label="阶段" class="more-width">
+          <!-- 表单元素数据的绑定 是v-model -->
+          <el-select v-model="formInline.step" placeholder="请选择阶段">
+            <el-option label="初级" value="初级"></el-option>
+            <el-option label="中级" value="中级"></el-option>
+            <el-option label="高级" value="高级"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="创建者">
+        <el-form-item label="企业" class="more-width">
+          <!-- 表单元素数据的绑定 是v-model -->
+          <el-select v-model="formInline.status" placeholder="请选择企业">
+            <el-option label="启用" :value="1"></el-option>
+            <el-option label="禁用" :value="0"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="题型" class="more-width">
+          <!-- 表单元素数据的绑定 是v-model -->
+          <el-select v-model="formInline.type" placeholder="请选择题型">
+            <el-option label="单选" value="单选"></el-option>
+            <el-option label="多选" value="多选"></el-option>
+            <el-option label="简答" value="简答"></el-option>
+          </el-select>
+        </el-form-item>
+        <br>
+        <el-form-item label="难度" class="more-width">
+          <!-- 表单元素数据的绑定 是v-model -->
+          <el-select v-model="formInline.difficulty" placeholder="请选择难度">
+            <el-option label="简单" value="简单"></el-option>
+            <el-option label="一般" value="一般"></el-option>
+            <el-option label="困难" value="困难"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="作者">
           <el-input v-model="formInline.creater"></el-input>
         </el-form-item>
         <el-form-item label="状态" class="more-width">
@@ -20,6 +53,20 @@
             <el-option label="禁用" :value="0"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="日期" class="more-width">
+          <el-date-picker
+            v-model="formInline.create_date"
+            type="datetime"
+            placeholder="选择日期时间"
+            default-time="12:00:00"
+            prefix-icon="niubi"
+          >
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="标题">
+          <el-input class="title-input" v-model="formInline.title"></el-input>
+        </el-form-item>
+
         <el-form-item>
           <el-button type="primary" @click="search">搜索</el-button>
           <el-button>清除</el-button>
@@ -28,7 +75,7 @@
             @click="addFormVisible = true"
             icon="el-icon-plus"
             v-power="['管理员']"
-            >新增问题</el-button
+            >新增试题</el-button
           >
         </el-form-item>
       </el-form>
@@ -132,14 +179,14 @@ export default {
     getList() {
       window.console.log("getList");
       // 调用接口 传递筛选条件
-      // subject
-      //   .list({ page: this.page, limit: this.limit, ...this.formInline })
-      //   .then(res => {
-      //     // 赋值给table
-      //     this.tableData = res.data.data.items;
-      //     // 重新设置页容量即可
-      //     this.total = res.data.data.pagination.total;
-      //   });
+      question
+        .list({ page: this.page, limit: this.limit, ...this.formInline })
+        .then(res => {
+          // 赋值给table
+          this.tableData = res.data.data.items;
+          // 重新设置页容量即可
+          this.total = res.data.data.pagination.total;
+        });
     },
     // 筛选逻辑
     search() {
@@ -172,7 +219,13 @@ export default {
 <style lang="less">
 .question-container {
   .el-input__inner {
-    width: 100px;
+    width: 150px;
+  }
+  // 标题内部 文本框的尺寸
+  .title-input{
+    .el-input__inner {
+    width: 400px;
+  }
   }
   .more-width {
     .el-input__inner {
@@ -192,6 +245,12 @@ export default {
   // span 变红
   .red {
     color: red;
+  }
+
+  // 文本的间隙
+  .el-form-item__label{
+    padding-right: 31px;
+    padding-left: 30px;
   }
 }
 </style>
