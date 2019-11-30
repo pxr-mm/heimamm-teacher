@@ -151,7 +151,7 @@
       :visible.sync="addFormVisible"
       @opened="opened"
     >
-      <el-form :model="addForm">
+      <el-form :model="addForm" ref="addForm" :rules="addFormRules">
         <!-- 学科 -->
         <el-form-item label="学科" class="more-width">
           <!-- 表单元素数据的绑定 是v-model -->
@@ -197,14 +197,12 @@
           </el-cascader>
         </el-form-item>
         <!-- 标题富文本 -->
-        <el-form-item label="试题标题"> </el-form-item>
+        <el-form-item label="试题标题" prop="title"></el-form-item>
         <div ref="titleEditor"></div>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="submitAdd">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -278,7 +276,11 @@ export default {
       // 省市区数据
       options: regionData,
       // 标题富文本
-      titleEditor: undefined
+      titleEditor: undefined,
+      // 新增表单验证规则
+      addFormRules: {
+        title: [{ required: true, message: "标题不能为空哦！" }]
+      }
     };
   },
   created() {
@@ -352,7 +354,7 @@ export default {
       if (!this.titleEditor) {
         this.titleEditor = new WangEditor(this.$refs.titleEditor);
         // 调整设置
-        this.titleEditor.customConfig.onchange = (html)=>{
+        this.titleEditor.customConfig.onchange = html => {
           // html 即变化之后的内容
           // window.console.log(html);
           // 设置给标题
@@ -361,6 +363,17 @@ export default {
         // 创建
         this.titleEditor.create();
       }
+    },
+    // 提交数据
+    submitAdd() {
+      this.$refs.addForm.validate(valid => {
+        if (valid) {
+          window.alert("submit!");
+        } else {
+          window.console.log("error submit!!");
+          return false;
+        }
+      });
     }
   }
 };
