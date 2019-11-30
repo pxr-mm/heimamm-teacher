@@ -215,6 +215,40 @@
         <!-- 标题富文本 -->
         <el-form-item label="试题标题" prop="title"></el-form-item>
         <div ref="titleEditor"></div>
+        <!-- 选项区域 -->
+        <el-form-item label="单选" class="more-width">
+          <el-radio-group v-model="addForm.single_select_answer">
+            <div class="select-box">
+              <el-radio label="A">A</el-radio>
+              <!-- 文本框 -->
+              <el-input
+                v-model="addForm.select_options[0].text"
+                placeholder=""
+              ></el-input>
+              <!-- 上传 -->
+              <el-upload
+                class="avatar-uploader"
+                :action="actions"
+                :show-file-list="false"
+                :on-success="aAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
+              >
+                <el-button type="primary" >上传缩略图</el-button>
+                <img v-if="aImageURL" :src="aImageURL" class="avatar" />
+                
+              </el-upload>
+            </div>
+            <div class="select-box">
+              <el-radio label="B">B</el-radio>
+            </div>
+            <div class="select-box">
+              <el-radio label="C">C</el-radio>
+            </div>
+            <div class="select-box">
+              <el-radio label="D">D</el-radio>
+            </div>
+          </el-radio-group>
+        </el-form-item>
         <!-- 答案富文本 -->
         <el-form-item label="试题答案" prop="answer_analyze"></el-form-item>
         <div ref="answerEditor"></div>
@@ -302,7 +336,11 @@ export default {
       addFormRules: {
         title: [{ required: true, message: "标题不能为空哦！" }],
         answer_analyze: [{ required: true, message: "答案解析不能为空哦" }]
-      }
+      },
+      // 上传地址
+      actions:process.env.VUE_APP_BASEURL+'/question/upload',
+      // 选项A的图片地址
+      aImageURL:''
     };
   },
   created() {
@@ -409,6 +447,27 @@ export default {
           return false;
         }
       });
+    },
+    // 上传成功
+    aAvatarSuccess(res, file) {
+      // window.console.log(res);
+      // window.console.log(file);
+      // 保存图片地址到选项中
+      this.addForm.select_options[0].image = res.data.url;
+      this.aImageURL = URL.createObjectURL(file.raw);
+    },
+    // 上传之前
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
     }
   }
 };
