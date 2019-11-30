@@ -233,19 +233,66 @@
                 :on-success="aAvatarSuccess"
                 :before-upload="beforeAvatarUpload"
               >
-                <el-button type="primary" >上传缩略图</el-button>
-                <img v-if="aImageURL" :src="aImageURL" class="avatar" />
-                
+                <el-button type="primary">上传缩略图</el-button>
+                <img  :src="aImageURL" class="avatar" />
               </el-upload>
             </div>
             <div class="select-box">
               <el-radio label="B">B</el-radio>
+              <!-- 文本框 -->
+              <el-input
+                v-model="addForm.select_options[1].text"
+                placeholder=""
+              ></el-input>
+              <!-- 上传 -->
+              <el-upload
+                class="avatar-uploader"
+                :action="actions"
+                :show-file-list="false"
+                :on-success="bAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
+              >
+                <el-button type="primary">上传缩略图</el-button>
+                <img  :src="bImageURL" class="avatar" />
+              </el-upload>
             </div>
             <div class="select-box">
               <el-radio label="C">C</el-radio>
+              <!-- 文本框 -->
+              <el-input
+                v-model="addForm.select_options[2].text"
+                placeholder=""
+              ></el-input>
+              <!-- 上传 -->
+              <el-upload
+                class="avatar-uploader"
+                :action="actions"
+                :show-file-list="false"
+                :on-success="cAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
+              >
+                <el-button type="primary">上传缩略图</el-button>
+                <img  :src="cImageURL" class="avatar" />
+              </el-upload>
             </div>
             <div class="select-box">
               <el-radio label="D">D</el-radio>
+              <!-- 文本框 -->
+              <el-input
+                v-model="addForm.select_options[3].text"
+                placeholder=""
+              ></el-input>
+              <!-- 上传 -->
+              <el-upload
+                class="avatar-uploader"
+                :action="actions"
+                :show-file-list="false"
+                :on-success="dAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
+              >
+                <el-button type="primary">上传缩略图</el-button>
+                <img  :src="dImageURL" class="avatar" />
+              </el-upload>
             </div>
           </el-radio-group>
         </el-form-item>
@@ -338,9 +385,12 @@ export default {
         answer_analyze: [{ required: true, message: "答案解析不能为空哦" }]
       },
       // 上传地址
-      actions:process.env.VUE_APP_BASEURL+'/question/upload',
+      actions: process.env.VUE_APP_BASEURL + "/question/upload",
       // 选项A的图片地址
-      aImageURL:''
+      aImageURL: "",
+      bImageURL: "",
+      cImageURL: "",
+      dImageURL: ""
     };
   },
   created() {
@@ -456,6 +506,27 @@ export default {
       this.addForm.select_options[0].image = res.data.url;
       this.aImageURL = URL.createObjectURL(file.raw);
     },
+    bAvatarSuccess(res, file) {
+      // window.console.log(res);
+      // window.console.log(file);
+      // 保存图片地址到选项中
+      this.addForm.select_options[1].image = res.data.url;
+      this.bImageURL = URL.createObjectURL(file.raw);
+    },
+    cAvatarSuccess(res, file) {
+      // window.console.log(res);
+      // window.console.log(file);
+      // 保存图片地址到选项中
+      this.addForm.select_options[2].image = res.data.url;
+      this.cImageURL = URL.createObjectURL(file.raw);
+    },
+    dAvatarSuccess(res, file) {
+      // window.console.log(res);
+      // window.console.log(file);
+      // 保存图片地址到选项中
+      this.addForm.select_options[3].image = res.data.url;
+      this.dImageURL = URL.createObjectURL(file.raw);
+    },
     // 上传之前
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg";
@@ -521,6 +592,21 @@ export default {
     }
     .el-dialog__footer {
       text-align: center;
+    }
+
+    // 选项布局
+    .select-box {
+      display: flex;
+      align-items: center;
+      height: 178px;
+      .el-upload {
+        display: flex;
+        height: 178px;
+        align-items: center;
+      }
+      .el-button {
+        height: 40px;
+      }
     }
   }
 }
