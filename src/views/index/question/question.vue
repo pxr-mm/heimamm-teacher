@@ -215,8 +215,8 @@
         <!-- 标题富文本 -->
         <el-form-item label="试题标题" prop="title"></el-form-item>
         <div ref="titleEditor"></div>
-        <!-- 选项区域 -->
-        <el-form-item label="单选" class="more-width">
+        <!-- 选项区域 单选 -->
+        <el-form-item v-if="addForm.type==='单选'" label="单选" class="more-width">
           <el-radio-group v-model="addForm.single_select_answer">
             <div class="select-box">
               <el-radio label="A">A</el-radio>
@@ -234,7 +234,7 @@
                 :before-upload="beforeAvatarUpload"
               >
                 <el-button type="primary">上传缩略图</el-button>
-                <img  :src="aImageURL" class="avatar" />
+                <img :src="aImageURL" class="avatar" />
               </el-upload>
             </div>
             <div class="select-box">
@@ -253,7 +253,7 @@
                 :before-upload="beforeAvatarUpload"
               >
                 <el-button type="primary">上传缩略图</el-button>
-                <img  :src="bImageURL" class="avatar" />
+                <img :src="bImageURL" class="avatar" />
               </el-upload>
             </div>
             <div class="select-box">
@@ -272,7 +272,7 @@
                 :before-upload="beforeAvatarUpload"
               >
                 <el-button type="primary">上传缩略图</el-button>
-                <img  :src="cImageURL" class="avatar" />
+                <img :src="cImageURL" class="avatar" />
               </el-upload>
             </div>
             <div class="select-box">
@@ -291,10 +291,91 @@
                 :before-upload="beforeAvatarUpload"
               >
                 <el-button type="primary">上传缩略图</el-button>
-                <img  :src="dImageURL" class="avatar" />
+                <img :src="dImageURL" class="avatar" />
               </el-upload>
             </div>
           </el-radio-group>
+        </el-form-item>
+        <!-- 选项区域 多选 -->
+        <el-form-item v-if="addForm.type==='多选'" label="多选" class="more-width">
+          <el-checkbox-group v-model="addForm.multiple_select_answer">
+            <div class="select-box">
+              <el-checkbox label="A">A</el-checkbox>
+              <!-- 文本框 -->
+              <el-input
+                v-model="addForm.select_options[0].text"
+                placeholder=""
+              ></el-input>
+              <!-- 上传 -->
+              <el-upload
+                class="avatar-uploader"
+                :action="actions"
+                :show-file-list="false"
+                :on-success="aAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
+              >
+                <el-button type="primary">上传缩略图</el-button>
+                <img :src="aImageURL" class="avatar" />
+              </el-upload>
+            </div>
+            <div class="select-box">
+              <el-checkbox label="B">B</el-checkbox>
+              <!-- 文本框 -->
+              <el-input
+                v-model="addForm.select_options[1].text"
+                placeholder=""
+              ></el-input>
+              <!-- 上传 -->
+              <el-upload
+                class="avatar-uploader"
+                :action="actions"
+                :show-file-list="false"
+                :on-success="bAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
+              >
+                <el-button type="primary">上传缩略图</el-button>
+                <img :src="bImageURL" class="avatar" />
+              </el-upload>
+            </div>
+            <div class="select-box">
+              <el-checkbox label="C">C</el-checkbox>
+              <!-- 文本框 -->
+              <el-input
+                v-model="addForm.select_options[2].text"
+                placeholder=""
+              ></el-input>
+              <!-- 上传 -->
+              <el-upload
+                class="avatar-uploader"
+                :action="actions"
+                :show-file-list="false"
+                :on-success="cAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
+              >
+                <el-button type="primary">上传缩略图</el-button>
+                <img :src="cImageURL" class="avatar" />
+              </el-upload>
+            </div>
+            <div class="select-box">
+              <el-checkbox label="D">D</el-checkbox>
+              <!-- 文本框 -->
+              <el-input
+                v-model="addForm.select_options[3].text"
+                placeholder=""
+              ></el-input>
+              <!-- 上传 -->
+              <el-upload
+                class="avatar-uploader"
+                :action="actions"
+                :show-file-list="false"
+                :on-success="dAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
+              >
+                <el-button type="primary">上传缩略图</el-button>
+                <img :src="dImageURL" class="avatar" />
+              </el-upload>
+            </div>
+          </el-checkbox-group>
         </el-form-item>
         <!-- 答案富文本 -->
         <el-form-item label="试题答案" prop="answer_analyze"></el-form-item>
@@ -369,7 +450,9 @@ export default {
         difficulty: "简单",
         single_select_answer: "A",
         video: "upload/20191129/bd666ff11c11cc01f494d6ba49757a64.png",
-        remark: "好好吃东西哦"
+        remark: "好好吃东西哦",
+        // 多选选项
+        multiple_select_answer:[]
       },
       // 新增框是否显示
       addFormVisible: false,
@@ -607,6 +690,10 @@ export default {
       .el-button {
         height: 40px;
       }
+    }
+
+    .el-form-item__content{
+      margin-top: 30px;
     }
   }
 }
