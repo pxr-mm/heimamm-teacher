@@ -77,7 +77,7 @@
 
         <el-form-item>
           <el-button type="primary" @click="search">搜索</el-button>
-          <el-button @click="formInline={}">清除</el-button>
+          <el-button @click="formInline = {}">清除</el-button>
           <el-button
             type="primary"
             @click="addFormVisible = true"
@@ -142,6 +142,54 @@
       >
       </el-pagination>
     </el-card>
+
+    <!-- 新增对话框 -->
+    <el-dialog class="add-dialog" title="新增试题" fullscreen="" :visible.sync="addFormVisible">
+      <el-form :model="addForm">
+        <!-- 学科 -->
+        <el-form-item label="学科" class="more-width">
+          <!-- 表单元素数据的绑定 是v-model -->
+          <el-select v-model="formInline.subject" placeholder="请选择学科">
+            <el-option
+              v-for="item in subjectArr"
+              :label="item.name"
+              :value="item.id"
+              :key="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 阶段 -->
+
+        <el-form-item label="阶段" class="more-width">
+          <!-- 表单元素数据的绑定 是v-model -->
+          <el-select v-model="formInline.step" placeholder="请选择阶段">
+            <el-option label="初级" value="初级"></el-option>
+            <el-option label="中级" value="中级"></el-option>
+            <el-option label="高级" value="高级"></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 企业 -->
+
+        <el-form-item label="企业" class="more-width">
+          <!-- 表单元素数据的绑定 是v-model -->
+          <el-select v-model="formInline.enterprise" placeholder="请选择企业">
+            <el-option
+              v-for="item in enterpriseArr"
+              :label="item.name"
+              :value="item.id"
+              :key="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 城市 -->
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -167,7 +215,11 @@ export default {
       // 学科列表
       subjectArr: [],
       // 企业列表
-      enterpriseArr: []
+      enterpriseArr: [],
+      // 新增的表格数据
+      addForm:{},
+      // 新增框是否显示
+      addFormVisible:false
     };
   },
   created() {
@@ -274,6 +326,20 @@ export default {
   .el-form-item__label {
     padding-right: 31px;
     padding-left: 30px;
+  }
+
+  // 新增 盒子
+  .add-dialog{
+    .el-form{
+      width: 50%;
+      margin: 0 auto;
+      .el-input__inner{
+        width: 364px;
+      }
+    }
+    .el-dialog__footer{
+      text-align: center;
+    }
   }
 }
 </style>
