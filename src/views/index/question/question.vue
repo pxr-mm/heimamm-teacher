@@ -6,9 +6,13 @@
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="学科" class="more-width">
           <!-- 表单元素数据的绑定 是v-model -->
-          <el-select v-model="formInline.status" placeholder="请选择学科">
-            <el-option label="启用" :value="1"></el-option>
-            <el-option label="禁用" :value="0"></el-option>
+          <el-select v-model="formInline.subject" placeholder="请选择学科">
+            <el-option
+              v-for="item in subjectArr"
+              :label="item.name"
+              :value="item.id"
+              :key="item.id"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="阶段" class="more-width">
@@ -21,9 +25,13 @@
         </el-form-item>
         <el-form-item label="企业" class="more-width">
           <!-- 表单元素数据的绑定 是v-model -->
-          <el-select v-model="formInline.status" placeholder="请选择企业">
-            <el-option label="启用" :value="1"></el-option>
-            <el-option label="禁用" :value="0"></el-option>
+          <el-select v-model="formInline.enterprise" placeholder="请选择企业">
+            <el-option
+              v-for="item in enterpriseArr"
+              :label="item.name"
+              :value="item.id"
+              :key="item.id"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="题型" class="more-width">
@@ -34,7 +42,7 @@
             <el-option label="简答" value="简答"></el-option>
           </el-select>
         </el-form-item>
-        <br>
+        <br />
         <el-form-item label="难度" class="more-width">
           <!-- 表单元素数据的绑定 是v-model -->
           <el-select v-model="formInline.difficulty" placeholder="请选择难度">
@@ -139,7 +147,7 @@
 
 <script>
 // 导入接口
-import { question } from "../../../api/api.js";
+import { question, subject, enterprise } from "../../../api/api.js";
 export default {
   name: "question",
   data() {
@@ -155,7 +163,11 @@ export default {
       // 页码数组
       pageSizes: [5, 10, 15, 20],
       // 总条数
-      total: 0
+      total: 0,
+      // 学科列表
+      subjectArr: [],
+      // 企业列表
+      enterpriseArr: []
     };
   },
   created() {
@@ -172,6 +184,17 @@ export default {
         // 总条数
         this.total = res.data.data.pagination.total;
       });
+
+    // 企业数据
+    enterprise.list().then(res => {
+      // window.console.log(res);
+      this.enterpriseArr = res.data.data.items;
+    });
+    // 学科数据
+    subject.list().then(res => {
+      // window.console.log(res);
+      this.subjectArr = res.data.data.items;
+    });
   },
   // 方法
   methods: {
@@ -222,10 +245,10 @@ export default {
     width: 150px;
   }
   // 标题内部 文本框的尺寸
-  .title-input{
+  .title-input {
     .el-input__inner {
-    width: 400px;
-  }
+      width: 400px;
+    }
   }
   .more-width {
     .el-input__inner {
@@ -248,7 +271,7 @@ export default {
   }
 
   // 文本的间隙
-  .el-form-item__label{
+  .el-form-item__label {
     padding-right: 31px;
     padding-left: 30px;
   }
