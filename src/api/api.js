@@ -55,7 +55,7 @@ axios.interceptors.response.use(
       return;
     }
     // 如果状态码为200 成功
-    if(response.data.code===200){
+    if (response.data.code === 200) {
       Message.success(response.data.message);
     }
     return response;
@@ -243,3 +243,55 @@ export const user = {
   }
 };
 
+// 作用域 抽取问题接口
+export const question = {
+  // 新增
+  add(data) {
+    return axios({
+      url: "/question/add",
+      method: "post",
+      data
+    });
+  },
+  // 一条
+  one(data) {
+    return axios({
+      url: "/questions/one",
+      method: "post",
+      data
+    });
+  },
+  // 列表
+  // get请求的参数用params来传递
+  list(params) {
+    return axios({
+      url: "/questions/list",
+      method: "get",
+      params
+    });
+  },
+  // 状态
+  status(data) {
+    return axios({
+      url: "/question/status",
+      method: "post",
+      data
+    });
+  },
+  // 编辑
+  edit(data) {
+    return axios({
+      url: "/questions/edit",
+      method: "post",
+      data
+    });
+  },
+  // 删除
+  remove(data) {
+    return axios({
+      url: "/question/remove",
+      method: "post",
+      data
+    });
+  }
+};
